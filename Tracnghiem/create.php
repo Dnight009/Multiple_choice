@@ -7,7 +7,7 @@
 </head>
 <body>
 
-  <form class="container" method="post" action="submit_bode.php" enctype="multipart/form-data">
+  <form class="container" method="post" action="../Tracnghiem/multiplechoice.php" enctype="multipart/form-data">
     <div class="form-box">
       <label for="tenbode">Tên bộ đề:</label>
       <input type="text" name="tenbode" id="tenbode" required>
