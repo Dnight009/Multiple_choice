@@ -1,0 +1,65 @@
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      border: 2px solid #2196F3;
+      padding: 40px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      width: 600px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .form-box {
+      background-color: #66d3ee;
+      padding: 30px;
+      border-radius: 15px;
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      row-gap: 20px;
+      column-gap: 20px;
+    }
+
+    .form-box label {
+      background-color: #92b4ec;
+      padding: 10px 15px;
+      border-radius: 20px;
+      text-align: right;
+      color: #333;
+    }
+
+    .form-box input[type="text"],
+    .form-box input[type="file"] {
+      background-color: #92b4ec;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 20px;
+      width: 100%;
+      color: #333;
+    }
+
+    .button-group {
+      margin-top: 30px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .button-group button {
+      background-color: #b2ebf2;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .button-group button:hover {
+      background-color: #81d4fa;
+    }
