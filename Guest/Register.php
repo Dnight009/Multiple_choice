@@ -1,5 +1,8 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
   <meta charset="UTF-8">
   <title>Sign Up</title>
@@ -7,6 +10,16 @@
 </head>
 <body>
   <div class="login-container">
+    <?php
+      if (!empty($_SESSION['error'])) {
+        echo '<p style="color:red;">'.htmlspecialchars($_SESSION['error']).'</p>';
+        unset($_SESSION['error']);
+      }
+      if (!empty($_SESSION['success'])) {
+        echo '<p style="color:green;">'.htmlspecialchars($_SESSION['success']).'</p>';
+        unset($_SESSION['success']);
+      }
+    ?>
     <form action="process_register.php" method="post" class="login-box fade-in">
       <h2>Sign Up</h2>
       

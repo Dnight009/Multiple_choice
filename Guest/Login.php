@@ -7,7 +7,7 @@
 </head>
 <body>
   <div class="login-container">
-    <form action="login.php" method="post" class="login-box fade-in">
+    <form action="process_login.php" method="post" class="login-box fade-in">
       <h2>Login</h2>
       
       <label>Username</label>
