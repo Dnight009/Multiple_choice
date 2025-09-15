@@ -131,3 +131,30 @@
     background: #f1c40f;
     color: #fff;
 }
+.profile-dropdown {
+    position: relative;
+}
+.profile-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 44px;
+    background: #fff;
+    min-width: 180px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    border-radius: 6px;
+    z-index: 200;
+    padding: 8px 0;
+    list-style: none;
+}
+.profile-menu li a {
+    display: block;
+    padding: 10px 20px;
+    color: #2d98da;
+    text-decoration: none;
+    font-size: 15px;
+}
+.profile-menu li a:hover {
+    background: #f5f6fa;
+    color: #3867d6;
+}

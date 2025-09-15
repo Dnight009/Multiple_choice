@@ -25,10 +25,10 @@
 </div>
 
 <script>
-function toggleAIChat() {
-    var widget = document.getElementById('ai-chat-widget');
-    widget.classList.toggle('open');
-}
+    function toggleAIChat() { 
+        var widget = document.getElementById('ai-chat-widget'); 
+        widget.classList.toggle('open'); 
+    }
 function sendAIMessage() {
     var input = document.getElementById('ai-chat-input');
     var messages = document.getElementById('ai-chat-messages');
@@ -44,15 +44,28 @@ function sendAIMessage() {
     input.value = '';
     messages.scrollTop = messages.scrollHeight;
 
-    // Hiển thị phản hồi AI giả lập
-    setTimeout(function() {
+    // Gửi lên server (gemini.php)
+    fetch("gemini.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text })
+    })
+    .then(res => res.json())
+    .then(data => {
         var aiMsg = document.createElement('div');
         aiMsg.className = 'ai-msg';
-        aiMsg.innerText = '🤖 AI: Cảm ơn bạn đã hỏi! (Demo)';
+        aiMsg.innerText = "🤖 " + data.reply;
         messages.appendChild(aiMsg);
         messages.scrollTop = messages.scrollHeight;
-    }, 800);
+    })
+    .catch(err => {
+        var aiMsg = document.createElement('div');
+        aiMsg.className = 'ai-msg';
+        aiMsg.innerText = "⚠️ Lỗi: " + err;
+        messages.appendChild(aiMsg);
+    });
 
     return false;
 }
+
 </script>

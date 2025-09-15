@@ -1,4 +1,5 @@
 <?php
+session_start();
 ?>
 <header>
     <link rel="stylesheet" href="../CSS/Home/navbar.css">
@@ -53,24 +54,51 @@
     </div>
     <div class="search-profile">
         <input type="text" placeholder="Tìm kiếm...">
-        <button class="profile-btn" title="Trang cá nhân">
-            <span>&#128100;</span>
-        </button>
+        <div class="profile-dropdown">
+            <button class="profile-btn" id="profileBtn" title="Tài khoản">
+                <span>&#128100;</span>
+                <?php if (isset($_SESSION['username'])) echo htmlspecialchars($_SESSION['username']); ?>
+            </button>
+            <ul class="profile-menu" id="profileMenu">
+                <?php if (!isset($_SESSION['username'])): ?>
+                    <li><a href="/Guest/Login.php">Đăng nhập</a></li>
+                    <li><a href="/Guest/Register.php">Đăng ký</a></li>
+                <?php else: ?>
+                    <li><a href="#">Thông tin cá nhân</a></li>
+                    <li><a href="#">Đổi mật khẩu</a></li>
+                    <li><a href="/Guest/Logout.php">Đăng xuất</a></li>
+                <?php endif; ?>
+            </ul>
+        </div>
     </div>
 </nav>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Dropdown danh mục
     const btn = document.getElementById('dropdownBtn');
     const content = document.getElementById('dropdownContent');
     btn.addEventListener('click', function(e) {
         e.preventDefault();
         content.classList.toggle('show');
     });
-    // Đóng dropdown khi click ra ngoài
     document.addEventListener('click', function(e) {
         if (!btn.contains(e.target) && !content.contains(e.target)) {
             content.classList.remove('show');
+        }
+    });
+
+    // Dropdown user
+    const profileBtn = document.getElementById('profileBtn');
+    const profileMenu = document.getElementById('profileMenu');
+    profileMenu.style.display = "none";
+    profileBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        profileMenu.style.display = profileMenu.style.display === 'block' ? 'none' : 'block';
+    });
+    document.addEventListener('click', function(e) {
+        if (!profileBtn.contains(e.target)) {
+            profileMenu.style.display = 'none';
         }
     });
 });
