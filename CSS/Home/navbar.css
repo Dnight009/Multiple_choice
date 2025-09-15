@@ -157,4 +157,20 @@
 .profile-menu li a:hover {
     background: #f5f6fa;
     color: #3867d6;
+}.profile-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+}
+
+.profile-btn .avatar-img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
 }

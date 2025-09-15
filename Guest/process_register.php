@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
     
 // include kết nối (đường dẫn tương đối: file connect.php nằm 1 cấp trên)
-require_once __DIR__ . '../Check/Connect.php';
+require_once __DIR__ . '/../Check/Connect.php';
 
 // Lấy dữ liệu và validate cơ bản
 $username   = trim($_POST['username'] ?? '');

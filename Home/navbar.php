@@ -1,5 +1,15 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Đặt ảnh mặc định
+$avatar = "/images/default-avatar.png";
+
+// Nếu đã đăng nhập và có ảnh trong session thì dùng ảnh đó
+if (isset($_SESSION['avatar']) && !empty($_SESSION['avatar'])) {
+    $avatar = $_SESSION['avatar'];
+}
 ?>
 <header>
     <link rel="stylesheet" href="../CSS/Home/navbar.css">
@@ -53,23 +63,27 @@ session_start();
         <a href="/Tracnghiem/create.php">Tạo bộ đề</a>
     </div>
     <div class="search-profile">
-        <input type="text" placeholder="Tìm kiếm...">
-        <div class="profile-dropdown">
-            <button class="profile-btn" id="profileBtn" title="Tài khoản">
+        <input type="text" placeholder="Tìm kiếm...">        
+    </div>
+    
+    <div class="profile-dropdown">
+        <button class="profile-btn" id="profileBtn" title="Tài khoản">
+            <?php if (!isset($_SESSION['username'])): ?>
                 <span>&#128100;</span>
-                <?php if (isset($_SESSION['username'])) echo htmlspecialchars($_SESSION['username']); ?>
-            </button>
-            <ul class="profile-menu" id="profileMenu">
-                <?php if (!isset($_SESSION['username'])): ?>
-                    <li><a href="/Guest/Login.php">Đăng nhập</a></li>
-                    <li><a href="/Guest/Register.php">Đăng ký</a></li>
-                <?php else: ?>
-                    <li><a href="#">Thông tin cá nhân</a></li>
-                    <li><a href="#">Đổi mật khẩu</a></li>
-                    <li><a href="/Guest/Logout.php">Đăng xuất</a></li>
-                <?php endif; ?>
-            </ul>
-        </div>
+            <?php else: ?>
+                <img src="<?php echo $avatar; ?>" alt="Avatar" class="avatar-img">
+            <?php endif; ?>
+        </button>
+        <ul class="profile-menu" id="profileMenu">
+            <?php if (!isset($_SESSION['username'])): ?>
+                <li><a href="/Guest/Login.php">Đăng nhập</a></li>
+                <li><a href="/Guest/Register.php">Đăng ký</a></li>
+            <?php else: ?>
+                <li><a href="/User/profile.php">Thông tin cá nhân</a></li>
+                <li><a href="/User/change_password.php">Đổi mật khẩu</a></li>
+                <li><a href="/Guest/Logout.php">Đăng xuất</a></li>
+            <?php endif; ?>
+        </ul>
     </div>
 </nav>
 
