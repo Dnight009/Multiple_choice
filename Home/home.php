@@ -1,6 +1,31 @@
 <?php
 // Trang chủ trắc nghiệm
-include 'navbar.php';
+include 'navbar.php'; 
+
+// 1. KẾT NỐI DATABASE
+// (Sử dụng đường dẫn file Connect.php của bạn)
+require_once __DIR__ . '/../Check/Connect.php'; 
+
+// 2. CHUẨN BỊ DỮ LIỆU "DỊCH"
+// Tạo một mảng để "dịch" các giá trị 'trinh_do'
+$trinh_do_map = [
+    'de'         => 'Dễ',
+    'binhthuong' => 'Bình thường',
+    'kho'        => 'Khó',
+    'nangcao'    => 'Nâng cao',
+    'tonghop'    => 'Tổng Hợp'
+];
+
+// 3. VIẾT CÂU TRUY VẤN SQL
+// Lấy 12 bộ đề mới nhất
+// Chúng ta JOIN với bảng ACCOUNT để lấy tên người tạo (username)
+$sql = "SELECT T.*, A.username 
+        FROM TEN_DE AS T
+        JOIN ACCOUNT AS A ON T.IDACC = A.IDACC
+        ORDER BY T.ngay_tao DESC 
+        LIMIT 12";
+
+$result = $conn->query($sql);
 ?>
 
 <!DOCTYPE html>
@@ -13,114 +38,60 @@ include 'navbar.php';
 <body>
     <div class="main-content">
         <div class="card-grid">
-            <!-- Đánh giá năng lực -->
-            <div class="card">
-                <div class="card-badge">Đ</div>
-                <div class="card-title">Đánh giá năng lực</div>
-                <div class="card-desc">
-                    Kỳ thi đánh giá năng lực về cơ bản là bài kiểm tra tập trung đánh giá năng lực cơ bản của thí sinh chuẩn bị bước vào đại học.
-                </div>
-                <div class="card-stars">★★★★★</div>
-                <div class="card-list">
-                    + ĐHQG Hà Nội <a href="#">361 đề thi</a><br>
-                    + ĐH Bách Khoa <a href="#">342 đề thi</a><br>
-                    + ĐHQG Hồ Chí Minh <a href="#">328 đề thi</a>
-                </div>
-                <div class="card-footer">
-                    <a href="#" class="card-link">Xem tất cả »</a>
-                    <span class="card-count"><span style="color:#e74c3c;">&#10084;</span> 1.050 bộ đề</span>
-                </div>
-            </div>
-            <!-- Tốt nghiệp THPT -->
-            <div class="card">
-                <div class="card-badge red">T</div>
-                <div class="card-title red">Tốt nghiệp THPT</div>
-                <div class="card-desc">
-                    Luyện thi các bài tập trắc nghiệm trực tuyến sát đề có lời giải chi tiết giúp khả năng đạt được điểm cao.
-                </div>
-                <div class="card-stars">★★★★★</div>
-                <div class="card-list">
-                    + Hóa học <a href="#">1.986 đề thi</a><br>
-                    + Tiếng Anh <a href="#">1.722 đề thi</a><br>
-                    + Vật lý <a href="#">1.459 đề thi</a>
-                </div>
-                <div class="card-footer">
-                    <a href="#" class="card-link">Xem tất cả »</a>
-                    <span class="card-count"><span style="color:#e74c3c;">&#10084;</span> 10.726 bộ đề</span>
-                </div>
-            </div>
-            <!-- Lớp 12 -->
-            <div class="card">
-                <div class="card-badge yellow">12</div>
-                <div class="card-title yellow">Lớp 12</div>
-                <div class="card-desc">
-                    Luyện bài tập trắc nghiệm trực tuyến các môn Toán, Lý, Hóa, Sinh, Anh, Sử, Địa, GDCD theo hướng đánh giá năng lực.
-                </div>
-                <div class="card-stars">★★★★★</div>
-                <div class="card-list">
-                    + Toán <a href="#">2.046 đề thi</a><br>
-                    + Hóa học <a href="#">1.985 đề thi</a><br>
-                    + Vật lý <a href="#">1.438 đề thi</a>
-                </div>
-                <div class="card-footer">
-                    <a href="#" class="card-link">Xem tất cả »</a>
-                    <span class="card-count" style="color:#f1c40f;"><span style="color:#e74c3c;">&#10084;</span> 11.124 bộ đề</span>
-                </div>
-            </div>
-            <!-- Lớp 11 -->
-            <div class="card">
-                <div class="card-badge yellow">11</div>
-                <div class="card-title yellow">Lớp 11</div>
-                <div class="card-desc">
-                    Làm bài tập trắc nghiệm theo mức độ tư duy các môn Toán, Lý, Hóa, Sinh, Anh, Sử, Địa có ngay đáp án và lời giải chi tiết.
-                </div>
-                <div class="card-stars">★★★★★</div>
-                <div class="card-list">
-                    + Toán <a href="#">1.582 đề thi</a><br>
-                    + Hóa học <a href="#">1.355 đề thi</a><br>
-                    + Vật lý <a href="#">1.101 đề thi</a>
-                </div>
-                <div class="card-footer">
-                    <a href="#" class="card-link">Xem tất cả »</a>
-                </div>
-            </div>
-            <!-- Lớp 10 -->
-            <div class="card">
-                <div class="card-badge blue">10</div>
-                <div class="card-title blue">Lớp 10</div>
-                <div class="card-desc">
-                    Làm bài tập trắc nghiệm có phương pháp và lời giải các môn Toán, Lý, Hóa, Sinh, Anh, Sử, Địa chắc kiến thức lớp 10.
-                </div>
-                <div class="card-stars">★★★★★</div>
-                <div class="card-list">
-                    + Toán <a href="#">1.504 đề thi</a><br>
-                    + Tiếng Anh <a href="#">1.220 đề thi</a><br>
-                    + Vật lý <a href="#">1.101 đề thi</a>
-                </div>
-                <div class="card-footer">
-                    <a href="#" class="card-link">Xem tất cả »</a>
-                </div>
-            </div>
-            <!-- Ôn vào 10 -->
-            <div class="card">
-                <div class="card-badge purple">10+</div>
-                <div class="card-title purple">Ôn vào 10</div>
-                <div class="card-desc">
-                    Ôn thi vào 10 - Các chủ đề ôn luyện được phân hoạch bám sát theo cấu trúc, ma trận đề thi vào lớp 10 của các tỉnh, thành phố.
-                </div>
-                <div class="card-stars">★★★★★</div>
-                <div class="card-list">
-                    + Tiếng Anh <a href="#">114 đề thi</a><br>
-                    + Văn <a href="#">106 đề thi</a><br>
-                    + Toán <a href="#">94 đề thi</a>
-                </div>
-                <div class="card-footer">
-                    <a href="#" class="card-link">Xem tất cả »</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <?php include 'aichat.php'; ?>
-    <?php include 'Footer.php'; ?>    
+            
+            <?php
+            // 4. BẮT ĐẦU VÒNG LẶP ĐỂ HIỂN THỊ CÁC BỘ ĐỀ
+            if ($result->num_rows > 0) {
+                // Lặp qua từng hàng (từng bộ đề)
+                while ($de_thi = $result->fetch_assoc()) {
+                    
+                    // Lấy và "dịch" dữ liệu
+                    $trinh_do_raw = $de_thi['trinh_do'];
+                    $trinh_do_text = $trinh_do_map[$trinh_do_raw] ?? $trinh_do_raw;
+                    
+                    $lop_hoc_text = "Lớp " . htmlspecialchars($de_thi['lop_hoc']);
+                    
+                    // Format ngày tạo
+                    $ngay_tao_formatted = date("d/m/Y", strtotime($de_thi['ngay_tao']));
+
+                    // Tạo link chi tiết
+                    $link_to_view = "../Tracnghiem/view_quiz_details.php?id_de=" . $de_thi['ID_TD'];
+                    ?>
+                    
+                    <div class="card">
+                        <div class="card-badge yellow"><?php echo htmlspecialchars($de_thi['lop_hoc']); ?></div>
+                        
+                        <div class="card-title yellow"><?php echo htmlspecialchars($de_thi['ten_de']); ?></div>
+                        
+                        <div class="card-desc">
+                            Bài trắc nghiệm dành cho <strong><?php echo $lop_hoc_text; ?></strong>.
+                            Mức độ: <strong><?php echo htmlspecialchars($trinh_do_text); ?></strong>.
+                        </div>
+                        
+                        <div class="card-stars">★★★★★</div>
+                        
+                        <div class="card-list">
+                            + Tác giả: <?php echo htmlspecialchars($de_thi['username']); ?><br>
+                            + Ngày tạo: <?php echo $ngay_tao_formatted; ?><br>
+                        </div>
+                        
+                        <div class="card-footer">
+                            <a href="<?php echo $link_to_view; ?>" class="card-link">Làm bài ngay »</a>
+                            
+                            </div>
+                    </div>
+                    <?php
+                } // Kết thúc vòng lặp while
+            } else {
+                // Nếu không có bộ đề nào
+                echo "<p style='text-align: center; width: 100%;'>Chưa có bộ đề nào được tạo.</p>";
+            }
+            
+            // 5. ĐÓNG KẾT NỐI
+            $conn->close();
+            ?>
+            
+        </div> </div> <?php include 'aichat.php'; ?>
+    <?php include 'Footer.php'; ?>     
 </body>
 </html>

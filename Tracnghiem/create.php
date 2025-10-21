@@ -13,10 +13,24 @@
       <input type="text" name="tenbode" id="tenbode" required>
 
       <label for="trinhdo">Trình độ:</label>
-      <input type="text" name="trinhdo" id="trinhdo" required>
+      <select name="trinhdo" id="trinhdo" required>
+        <option value="" disabled selected>-- Chọn trình độ --</option>
+        <option value="de">Dễ</option>
+        <option value="binhthuong">Bình thường</option>
+        <option value="kho">Khó</option>
+        <option value="nangcao">Nâng cao</option>
+        <option value="tonghop">Tổng Hợp</option>
+      </select>
 
-      <label for="monhoc">Môn học:</label>
-      <input type="text" name="monhoc" id="monhoc" required>
+      <label for="lophoc">Lớp học:</label>
+      <select name="lophoc" id="lophoc" required>
+        <option value="" disabled selected>-- Chọn lớp học --</option>
+        <?php
+        for ($i = 1; $i <= 12; $i++) {
+            echo "<option value=\"$i\">Lớp $i</option>";
+        }
+        ?>
+      </select>
 
       <label for="file">Tải file excel:</label>
       <input type="file" name="file" id="file" accept=".xlsx,.xls">

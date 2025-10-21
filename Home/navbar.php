@@ -60,7 +60,12 @@ if (isset($_SESSION['avatar']) && !empty($_SESSION['avatar'])) {
             </ul>
         </div>        
         <a href="#">Các bài trắc nghiệm</a>
-        <a href="/Tracnghiem/create.php">Tạo bộ đề</a>
+        <?php
+        if (isset($_SESSION['quyen']) && $_SESSION['quyen'] == '3') {    
+            echo '<a href="/Tracnghiem/create.php">Tạo bộ đề</a>';
+            echo '<a href="/Tracnghiem/list_created.php">Các bộ đề đã tạo</a>';
+            }
+        ?>
     </div>
     <div class="search-profile">
         <input type="text" placeholder="Tìm kiếm...">        
