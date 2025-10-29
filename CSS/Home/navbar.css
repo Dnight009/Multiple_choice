@@ -174,3 +174,31 @@
     object-fit: cover;
     border: 2px solid #fff;
 }
+/* Thêm vào cuối file navbar.css */
+.search-form-container {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 4px;
+    padding-right: 5px;
+}
+
+.search-form-container input[type="text"] {
+    border: none;
+    outline: none;
+    padding: 6px 12px;
+    font-size: 15px;
+    border-radius: 4px 0 0 4px;
+}
+
+.search-submit-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0 5px;
+    color: #555;
+}
+.search-submit-btn:hover {
+    color: #2d98da;
+}

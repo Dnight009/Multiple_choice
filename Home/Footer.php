@@ -7,8 +7,8 @@
     <div class="footer-container">
         <div class="footer-col">
             <div class="footer-logo">
-                <span style="color:#00b894;font-weight:bold;font-size:28px;">vietJack</span>
-                <span style="color:#f9a825;font-weight:bold;font-size:22px;">khoahoc</span>
+                <span style="color:#00b894;font-weight:bold;font-size:28px;">TracNgiem</span>
+                <span style="color:#f9a825;font-weight:bold;font-size:22px;">Online</span>
                 <span style="color:#f9a825;font-size:22px;">&#9997;</span>
             </div>
             <div class="footer-social">
@@ -17,8 +17,8 @@
             </div>
             <div class="footer-contact">
                 <div><span style="color:#f9a825;">&#x1F4CD;</span> Tầng 2, Tòa G5, Five Star, số 2 Kim Giang, Phường Kim Giang, quận Thanh Xuân, Hà Nội.</div>
-                <div>Phone: <span style="color:#fff;">084 283 45 85</span></div>
-                <div>Email: <span style="color:#fff;">vietjackteam@gmail.com</span></div>
+                <div>Phone: <span style="color:#fff;">000 00 00 000</span></div>
+                <div>Email: <span style="color:#fff;">Test@gmail.com</span></div>
             </div>
         </div>
         <div class="footer-col">
@@ -37,7 +37,6 @@
                 <li><a href="#">Chính sách bảo mật</a></li>
                 <li><a href="#">Điều khoản dịch vụ</a></li>
                 <li><a href="#">Hướng dẫn thanh toán VNPAY</a></li>
-                <li><a href="#">Tuyển dụng - Việc làm</a></li>
                 <li><a href="#">Bảo mật thông tin</a></li>
             </ul>
         </div>

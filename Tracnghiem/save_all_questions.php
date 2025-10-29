@@ -8,7 +8,7 @@ require_once __DIR__ . '/../Check/Connect.php';
 
 // 2. KIỂM TRA BẢO MẬT
 // Phải đăng nhập và là giáo viên mới được lưu
-if (!isset($_SESSION['IDACC']) || !isset($_SESSION['quyen']) || $_SESSION['quyen'] != '2') {
+if (!isset($_SESSION['IDACC']) || !isset($_SESSION['quyen']) || $_SESSION['quyen'] != '3') {
     die("Bạn không có quyền truy cập chức năng này.");
 }
 

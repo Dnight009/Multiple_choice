@@ -55,9 +55,11 @@ $lop_hoc_text = "Lớp " . htmlspecialchars($lop_hoc_raw);
         body { 
             font-family: Arial, sans-serif; 
             background: #f0f2f5; 
-            display: flex; 
-            justify-content: center; 
-            padding: 40px; 
+            display: flex;
+            flex-direction: column; /* Xếp dọc (đúng) */
+            margin: 0; /* Xóa mọi margin, padding mặc định */
+            padding: 0;
+            min-height: 100vh; /* Đảm bảo trang cao ít nhất bằng màn hình */
         }
         .container { 
             width: 900px; 
@@ -65,6 +67,7 @@ $lop_hoc_text = "Lớp " . htmlspecialchars($lop_hoc_raw);
             padding: 20px; 
             border-radius: 8px; 
             box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+            margin: 20px auto; /* <-- THÊM DÒNG NÀY */
         }
         .quiz-header {
             border-bottom: 2px solid #eee;
@@ -73,8 +76,8 @@ $lop_hoc_text = "Lớp " . htmlspecialchars($lop_hoc_raw);
         }
         .question-view-block { 
             background: #79e0f2;
-            border-radius: 15px; 
-            padding: 20px; 
+            border-radius: 15px ; 
+            padding: 15px 20px; 
             margin-bottom: 20px; 
         }
         .box {
@@ -87,10 +90,10 @@ $lop_hoc_text = "Lớp " . htmlspecialchars($lop_hoc_raw);
             align-items: center;
         }
         .question-row {
-            margin-bottom: 10px;
+            margin-bottom: 9px;
         }
         .question-row .box {
-            width: 100%;
+            width: 98%;
             font-weight: bold;
         }
         .answer-pair-row {
@@ -129,6 +132,7 @@ $lop_hoc_text = "Lớp " . htmlspecialchars($lop_hoc_raw);
     </style>
 </head>
 <body>
+    <?php include '../Home/navbar.php'; ?>
     <div class="container">
         
         <div class="quiz-header">
@@ -202,5 +206,7 @@ $lop_hoc_text = "Lớp " . htmlspecialchars($lop_hoc_raw);
         $conn->close();
         ?>
     </div>
+    <?php include '../Home/Footer.php'; ?>
 </body>
+
 </html>
