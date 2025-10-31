@@ -12,19 +12,29 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 $questions_from_excel = []; 
 $ten_bo_de = "";
 $trinh_do = "";
-$lop_hoc = ""; // Sẽ lấy từ $_POST
+$lop_hoc = "";
+$thoi_luong = 45; // [SỬA] Đặt giá trị mặc định
+$assigned_classes = []; // [SỬA] Mảng lưu các lớp được gán
 
 // 3. KIỂM TRA NẾU CÓ FILE TỪ TRANG 'Create.php' GỬI QUA
-// Dùng isset($_POST['tenbode']) để kiểm tra xem có phải từ form kia gửi qua không
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['tenbode'])) {
     
     // Lấy thông tin đề từ form Create.php
     $ten_bo_de = $_POST['tenbode'];
     $trinh_do = $_POST['trinhdo'];
     
-    // !!! SỬA LỖI QUAN TRỌNG: Phải lấy 'lophoc', không phải 'monhoc'
     if(isset($_POST['lophoc'])) {
         $lop_hoc = $_POST['lophoc'];
+    }
+
+    // [SỬA] Lấy thời lượng (lỗi lần trước)
+    if (isset($_POST['thoi_luong_phut']) && !empty($_POST['thoi_luong_phut'])) {
+        $thoi_luong = (int)$_POST['thoi_luong_phut'];
+    }
+    
+    // [SỬA] Lấy mảng các lớp được gán (lỗi lần này)
+    if (isset($_POST['assigned_classes']) && is_array($_POST['assigned_classes'])) {
+        $assigned_classes = $_POST['assigned_classes'];
     }
 
     // Xử lý đọc file Excel (chỉ khi file được tải lên)
@@ -39,7 +49,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['tenbode'])) {
             for ($row = 2; $row <= $highestRow; $row++) {
                 $cau_hoi  = $worksheet->getCell('A' . $row)->getValue();
                 
-                // Chỉ thêm nếu câu hỏi có nội dung
                 if (!empty($cau_hoi)) {
                     $questions_from_excel[] = [
                         'cau_hoi'  => $cau_hoi,
@@ -103,10 +112,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['tenbode'])) {
         font-size: 15px;
     }
     .full-width { 
-        width: calc(100% - 30px); /* Điều chỉnh lại cho đúng */
+        width: calc(100% - 30px); 
     }
-    .input-wrapper { /* Thêm 1 div bọc input câu hỏi */
-        padding-left: 135px; /* Đẩy input câu hỏi sang phải */
+    .input-wrapper { 
+        padding-left: 135px; 
         margin-bottom: 10px;
     }
     .half-width { 
@@ -163,11 +172,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['tenbode'])) {
             <input type="hidden" name="tenbode" value="<?php echo htmlspecialchars($ten_bo_de); ?>">
             <input type="hidden" name="trinhdo" value="<?php echo htmlspecialchars($trinh_do); ?>">
             <input type="hidden" name="lophoc" value="<?php echo htmlspecialchars($lop_hoc); ?>">
-
+            <input type="hidden" name="thoi_luong_phut" value="<?php echo htmlspecialchars($thoi_luong); ?>">
+            
+            <?php 
+            // Lặp qua mảng ID các lớp đã gán và tạo input ẩn
+            foreach ($assigned_classes as $class_id): 
+            ?>
+                <input type="hidden" name="assigned_classes[]" value="<?php echo htmlspecialchars($class_id); ?>">
+            <?php endforeach; ?>
             <div id="question-list-container">
                 
                 <?php
-                // !!! SỬA LỖI: Chỉ dùng 1 khối if/else (xóa khối lặp thừa)
+                // (Phần if/else để hiển thị câu hỏi từ Excel hoặc câu hỏi rỗng giữ nguyên)
                 if (!empty($questions_from_excel)):
                     foreach ($questions_from_excel as $index => $q):
                 ?>
@@ -247,53 +263,56 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['tenbode'])) {
                 <?php
                 endif;
                 ?>
-            </div> <div class="nav-buttons">
+            </div> 
+            
+            <div class="nav-buttons">
                 <button type="button" onclick="history.back()">Quay lại</button>
                 <button type="button" id="add-question-btn" class="add-btn">+</button>
-                
                 <button type="submit">Lưu tất cả</button>
             </div>
 
-        </form> </div> <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const addBtn = document.getElementById('add-question-btn');
-    const container = document.getElementById('question-list-container');
-    let nextQuestionIndex = container.querySelectorAll('.question-form-block').length;
+        </form> 
+    </div> 
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const addBtn = document.getElementById('add-question-btn');
+        const container = document.getElementById('question-list-container');
+        let nextQuestionIndex = container.querySelectorAll('.question-form-block').length;
 
-    addBtn.addEventListener('click', function() {
-        const newIndex = nextQuestionIndex; 
-        
-        // Sửa lại HTML cho khối mới (thiếu input câu hỏi)
-        const newBlockHTML = `
-        <div class="question-form-block">
-            <div class="input-wrapper">
-                <input type="text" class="full-width" id="q-${newIndex}-text" name="question[${newIndex}][cau_hoi]" placeholder="Nhập câu hỏi mới..." required>
-            </div>
-            <div class="answer-row">
-                <label for="q-${newIndex}-a">A</label>
-                <input type="text" class="half-width" id="q-${newIndex}-a" name="question[${newIndex}][dap_an_1]" required>
-
-                <label for="q-${newIndex}-b">B</label>
-                <input type="text" class="half-width" id="q-${newIndex}-b" name="question[${newIndex}][dap_an_2]" required>
-            </div>
-            <div class="answer-row">
-                <label for="q-${newIndex}-c">C</label>
-                <input type="text" class="half-width" id="q-${newIndex}-c" name="question[${newIndex}][dap_an_3]" required>
+        addBtn.addEventListener('click', function() {
+            const newIndex = nextQuestionIndex; 
             
-                <label for="q-${newIndex}-d">D</label>
-                <input type="text" class="half-width" id="q-${newIndex}-d" name="question[${newIndex}][dap_an_4]" required>
-            </div>
-            <div class="answer-row">
-                <label for="q-${newIndex}-correct">Đáp án đúng</label>
-                <input type="text" class="half-width" id="q-${newIndex}-correct" name="question[${newIndex}][dap_an_dung]" value="1" required>
-            </div>
-        </div>
-        `;
+            const newBlockHTML = `
+            <div class="question-form-block">
+                <div class="input-wrapper">
+                    <input type="text" class="full-width" id="q-${newIndex}-text" name="question[${newIndex}][cau_hoi]" placeholder="Nhập câu hỏi mới..." required>
+                </div>
+                <div class="answer-row">
+                    <label for="q-${newIndex}-a">A</label>
+                    <input type="text" class="half-width" id="q-${newIndex}-a" name="question[${newIndex}][dap_an_1]" required>
 
-        container.insertAdjacentHTML('beforeend', newBlockHTML);
-        nextQuestionIndex++;
+                    <label for="q-${newIndex}-b">B</label>
+                    <input type="text" class="half-width" id="q-${newIndex}-b" name="question[${newIndex}][dap_an_2]" required>
+                </div>
+                <div class="answer-row">
+                    <label for="q-${newIndex}-c">C</label>
+                    <input type="text" class="half-width" id="q-${newIndex}-c" name="question[${newIndex}][dap_an_3]" required>
+                
+                    <label for="q-${newIndex}-d">D</label>
+                    <input type="text" class="half-width" id="q-${newIndex}-d" name="question[${newIndex}][dap_an_4]" required>
+                </div>
+                <div class="answer-row">
+                    <label for="q-${newIndex}-correct">Đáp án đúng</label>
+                    <input type="text" class="half-width" id="q-${newIndex}-correct" name="question[${newIndex}][dap_an_dung]" value="1" required>
+                </div>
+            </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', newBlockHTML);
+            nextQuestionIndex++;
+        });
     });
-});
-</script>
+    </script>
 </body>
 </html>

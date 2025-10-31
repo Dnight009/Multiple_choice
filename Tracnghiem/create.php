@@ -1,9 +1,119 @@
+<?php
+// 1. KHỐI PHP NÀY ĐÃ CÓ (GIỮ NGUYÊN)
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require_once __DIR__ . '/../Check/Connect.php'; 
+
+if (!isset($_SESSION['IDACC']) || !isset($_SESSION['quyen']) || $_SESSION['quyen'] != '3') {
+    header("Location: /TracNghiem/Home/home.php"); 
+    exit;
+}
+$teacher_id = $_SESSION['IDACC'];
+
+$lop_cua_toi = [];
+$stmt_lop = $conn->prepare("SELECT ID_CLASS, ten_lop_hoc 
+                            FROM CLASS 
+                            WHERE IDACC_teach = ? AND trang_thai = 'đang hoạt động'
+                            ORDER BY ten_lop_hoc ASC");
+$stmt_lop->bind_param("i", $teacher_id);
+$stmt_lop->execute();
+$result_lop = $stmt_lop->get_result();
+if ($result_lop->num_rows > 0) {
+    $lop_cua_toi = $result_lop->fetch_all(MYSQLI_ASSOC);
+}
+$stmt_lop->close();
+$conn->close();
+?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
   <title>Tạo bộ đề</title>
     <link rel="stylesheet" href="../CSS/Tracnghiem/create.css">
+
+    <style>
+        .form-box input[type="number"] {
+            background-color: #92b4ec;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 20px;
+            width: 100%;
+            color: #333;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 15px;
+        }
+        .form-box input[type="number"]::placeholder {
+            color: #555;
+            opacity: 0.7;
+        }
+        .multi-select-container {
+            position: relative; 
+            background-color: #92b4ec;
+            border-radius: 20px;
+            padding: 5px 10px;
+            width: 100%;
+            box-sizing: border-box; 
+            min-height: 48px; 
+            display: flex;
+            flex-wrap: wrap; 
+            gap: 5px; 
+        }
+        .pill {
+            background-color: #ffffff;
+            color: #2d98da;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px; 
+            height: fit-content; 
+        }
+        .pill-close {
+            cursor: pointer;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        .multi-select-input {
+            flex: 1; 
+            min-width: 150px; 
+            border: none;
+            outline: none;
+            background: none; 
+            padding: 5px 0;
+            font-size: 15px;
+            color: #333;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .multi-select-input::placeholder { color: #555; opacity: 0.7; }
+        .search-results {
+            display: none; 
+            position: absolute;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            width: calc(100% - 20px); 
+            left: 10px;
+            top: 100%; 
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            margin-top: 5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .result-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            color: #333;
+        }
+        .result-item:hover { background-color: #f0f0f0; }
+
+        /* --- ĐÃ XÓA CLASS .result-item.selected --- */
+        /* (Vì chúng ta sẽ lọc bằng JavaScript) */
+
+    </style>
 </head>
 <body>
 
@@ -22,15 +132,23 @@
         <option value="tonghop">Tổng Hợp</option>
       </select>
 
-      <label for="lophoc">Lớp học:</label>
+      <label for="lophoc">Phân loại (Khối lớp):</label> 
       <select name="lophoc" id="lophoc" required>
-        <option value="" disabled selected>-- Chọn lớp học --</option>
-        <?php
-        for ($i = 1; $i <= 12; $i++) {
-            echo "<option value=\"$i\">Lớp $i</option>";
-        }
-        ?>
+        <option value="" disabled selected>-- Chọn khối lớp --</option>
+        <?php for ($i = 1; $i <= 12; $i++) { echo "<option value=\"$i\">Lớp $i</option>"; } ?>
       </select>
+
+      <label for="thoi_luong">Thời gian (phút):</label>
+      <input type="number" name="thoi_luong_phut" id="thoi_luong" min="1" placeholder="Mặc định là 45 phút">
+
+      <label for="assign_classes_search">Gán cho các lớp:</label>
+      <div class="multi-select-container">
+          <div class="pills-container" id="pills-container">
+          </div>
+          <input type="text" id="assign_classes_search" class="multi-select-input"
+                 placeholder="Gõ để tìm lớp... (Để trống nếu đề công khai)">
+          <div class="search-results" id="search-results"></div>
+      </div>
 
       <label for="file">Tải file excel:</label>
       <input type="file" name="file" id="file" accept=".xlsx,.xls">
@@ -41,6 +159,113 @@
       <button type="submit">Tiếp theo</button>
     </div>
   </form>
+
+  <script>
+    const allClasses = <?php echo json_encode($lop_cua_toi); ?>;
+    
+    // --- THÊM DÒNG NÀY ĐỂ KIỂM TRA ---
+    // (Bấm F12 -> Console để xem)
+    console.log("Các lớp đã tải:", allClasses); 
+
+    const searchInput = document.getElementById('assign_classes_search');
+    const resultsContainer = document.getElementById('search-results');
+    const pillsContainer = document.getElementById('pills-container');
+
+    // --- HÀM showResults() ĐÃ ĐƯỢC VIẾT LẠI ---
+    function showResults() {
+        const searchTerm = searchInput.value.toLowerCase();
+        resultsContainer.innerHTML = ''; // Xóa kết quả cũ
+
+        // 1. Lấy danh sách ID các lớp ĐÃ ĐƯỢC CHỌN (trong pill)
+        const selectedIDs = new Set(
+            Array.from(pillsContainer.querySelectorAll('.pill'))
+                 .map(pill => pill.dataset.id)
+        );
+
+        // 2. Lọc danh sách 'allClasses'
+        const filtered = allClasses.filter(cls => {
+            // Điều kiện 1: Phải khớp với từ tìm kiếm
+            const matchesSearch = cls.ten_lop_hoc.toLowerCase().includes(searchTerm);
+            // Điều kiện 2: Phải CHƯA được chọn (không có trong Set 'selectedIDs')
+            const notSelected = !selectedIDs.has(cls.ID_CLASS);
+            
+            return matchesSearch && notSelected; // Phải thỏa mãn cả 2
+        });
+
+        // 3. Hiển thị kết quả đã lọc
+        if (filtered.length === 0) {
+            resultsContainer.innerHTML = '<div class="result-item" style="cursor:default; background:none;">Không tìm thấy (hoặc đã chọn hết).</div>';
+        } else {
+            filtered.forEach(cls => {
+                const item = document.createElement('div');
+                item.className = 'result-item';
+                item.dataset.id = cls.ID_CLASS; 
+                item.dataset.name = cls.ten_lop_hoc; 
+                item.textContent = cls.ten_lop_hoc;
+                
+                // (Không cần thêm class 'selected' nữa)
+                
+                resultsContainer.appendChild(item);
+            });
+        }
+        resultsContainer.style.display = 'block';
+    }
+    // --- KẾT THÚC HÀM MỚI ---
+
+    // Hàm thêm "pill" (Giữ nguyên, không lỗi)
+    function addPill(e) {
+        if (!e.target.classList.contains('result-item') || !e.target.dataset.id) {
+            return;
+        }
+
+        const id = e.target.dataset.id;
+        const name = e.target.dataset.name;
+
+        const pill = document.createElement('div');
+        pill.className = 'pill';
+        pill.dataset.id = id;
+
+        pill.innerHTML = `
+            <span>${name}</span>
+            <span class="pill-close" data-id="${id}">&times;</span>
+            <input type="hidden" name="assigned_classes[]" value="${id}">
+        `;
+        
+        pillsContainer.appendChild(pill);
+        searchInput.value = ''; 
+        // Ẩn dropdown và focus lại input để tìm tiếp
+        resultsContainer.style.display = 'none'; 
+        searchInput.focus();
+    }
+
+    // Hàm xóa "pill" (Giữ nguyên, không lỗi)
+    function removePill(e) {
+        if (!e.target.classList.contains('pill-close')) {
+            return;
+        }
+        
+        const pill = e.target.closest('.pill');
+        if (pill) {
+            pill.remove();
+            // Sau khi xóa, cập nhật lại danh sách đề xuất
+            showResults(); 
+        }
+    }
+
+    // Gán các sự kiện
+    searchInput.addEventListener('input', showResults); 
+    searchInput.addEventListener('focus', showResults); 
+    resultsContainer.addEventListener('click', addPill); 
+    pillsContainer.addEventListener('click', removePill); 
+
+    // Ẩn dropdown nếu bấm ra ngoài
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.multi-select-container')) {
+            resultsContainer.style.display = 'none';
+        }
+    });
+
+  </script>
 
 </body>
 </html>
