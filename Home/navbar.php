@@ -59,11 +59,10 @@ if (isset($_SESSION['avatar']) && !empty($_SESSION['avatar'])) {
                 </ul>
         </div>        
         <a href="../Home/gop_y.php">đóng góp ý kiến </a>
+        <a href="../Guest/history.php">Lịch sử làm bài </a>
         <?php
-        if (isset($_SESSION['quyen']) && $_SESSION['quyen'] == '3') {    
-            echo '<a href="/Tracnghiem/create.php">Tạo bộ đề</a>';
-            echo '<a href="/Tracnghiem/list_created.php">Các bộ đề đã tạo</a>';
-            echo '<a href="/Guest/class_create.php">Tạo lớp học</a>';
+        if (isset($_SESSION['quyen']) && $_SESSION['quyen'] == '3') {   
+            echo '<a href="../Guest/dashboard.php">Quản lý</a>';
             }
         ?>
     </div>

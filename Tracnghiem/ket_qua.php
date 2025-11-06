@@ -4,7 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 if (!isset($_SESSION['IDACC'])) {
-    header("Location: /TracNghiem/Guest/Login.php");
+    header("Location: /Guest/Login.php");
     exit;
 }
 require_once __DIR__ . '/../Check/Connect.php';
@@ -119,7 +119,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_de_thi'])) {
         
         <div class="score"><?php echo number_format($diem, 2); ?></div>
         
-        <a href="/TracNghiem/Home/home.php" class="btn-back">Quay về trang chủ</a>
+        <a href="../Home/home.php" class="btn-back">Quay về trang chủ</a>
     </div>
 
     <?php include __DIR__ . '/../Home/Footer.php'; ?>

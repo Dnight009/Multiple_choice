@@ -31,7 +31,6 @@ $conn->close();
   <meta charset="UTF-8">
   <title>Tạo bộ đề</title>
     <link rel="stylesheet" href="../CSS/Tracnghiem/create.css">
-
     <style>
         .form-box input[type="number"] {
             background-color: #92b4ec;
@@ -109,13 +108,11 @@ $conn->close();
             color: #333;
         }
         .result-item:hover { background-color: #f0f0f0; }
-
-        /* --- ĐÃ XÓA CLASS .result-item.selected --- */
-        /* (Vì chúng ta sẽ lọc bằng JavaScript) */
-
     </style>
 </head>
 <body>
+
+  <?php include __DIR__ . '/../Home/navbar.php'; ?>
 
   <form class="container" method="post" action="../Tracnghiem/multiplechoice.php" enctype="multipart/form-data">
     <div class="form-box">
@@ -163,36 +160,25 @@ $conn->close();
   <script>
     const allClasses = <?php echo json_encode($lop_cua_toi); ?>;
     
-    // --- THÊM DÒNG NÀY ĐỂ KIỂM TRA ---
-    // (Bấm F12 -> Console để xem)
     console.log("Các lớp đã tải:", allClasses); 
 
     const searchInput = document.getElementById('assign_classes_search');
     const resultsContainer = document.getElementById('search-results');
     const pillsContainer = document.getElementById('pills-container');
 
-    // --- HÀM showResults() ĐÃ ĐƯỢC VIẾT LẠI ---
     function showResults() {
         const searchTerm = searchInput.value.toLowerCase();
-        resultsContainer.innerHTML = ''; // Xóa kết quả cũ
-
-        // 1. Lấy danh sách ID các lớp ĐÃ ĐƯỢC CHỌN (trong pill)
+        resultsContainer.innerHTML = ''; 
         const selectedIDs = new Set(
             Array.from(pillsContainer.querySelectorAll('.pill'))
                  .map(pill => pill.dataset.id)
         );
-
-        // 2. Lọc danh sách 'allClasses'
         const filtered = allClasses.filter(cls => {
-            // Điều kiện 1: Phải khớp với từ tìm kiếm
             const matchesSearch = cls.ten_lop_hoc.toLowerCase().includes(searchTerm);
-            // Điều kiện 2: Phải CHƯA được chọn (không có trong Set 'selectedIDs')
-            const notSelected = !selectedIDs.has(cls.ID_CLASS);
+            const notSelected = !selectedIDs.has(String(cls.ID_CLASS)); // Sửa: so sánh string
             
-            return matchesSearch && notSelected; // Phải thỏa mãn cả 2
+            return matchesSearch && notSelected; 
         });
-
-        // 3. Hiển thị kết quả đã lọc
         if (filtered.length === 0) {
             resultsContainer.innerHTML = '<div class="result-item" style="cursor:default; background:none;">Không tìm thấy (hoặc đã chọn hết).</div>';
         } else {
@@ -202,17 +188,12 @@ $conn->close();
                 item.dataset.id = cls.ID_CLASS; 
                 item.dataset.name = cls.ten_lop_hoc; 
                 item.textContent = cls.ten_lop_hoc;
-                
-                // (Không cần thêm class 'selected' nữa)
-                
                 resultsContainer.appendChild(item);
             });
         }
         resultsContainer.style.display = 'block';
     }
-    // --- KẾT THÚC HÀM MỚI ---
 
-    // Hàm thêm "pill" (Giữ nguyên, không lỗi)
     function addPill(e) {
         if (!e.target.classList.contains('result-item') || !e.target.dataset.id) {
             return;
@@ -233,12 +214,10 @@ $conn->close();
         
         pillsContainer.appendChild(pill);
         searchInput.value = ''; 
-        // Ẩn dropdown và focus lại input để tìm tiếp
         resultsContainer.style.display = 'none'; 
         searchInput.focus();
     }
 
-    // Hàm xóa "pill" (Giữ nguyên, không lỗi)
     function removePill(e) {
         if (!e.target.classList.contains('pill-close')) {
             return;
@@ -247,25 +226,24 @@ $conn->close();
         const pill = e.target.closest('.pill');
         if (pill) {
             pill.remove();
-            // Sau khi xóa, cập nhật lại danh sách đề xuất
             showResults(); 
         }
     }
 
-    // Gán các sự kiện
     searchInput.addEventListener('input', showResults); 
     searchInput.addEventListener('focus', showResults); 
     resultsContainer.addEventListener('click', addPill); 
     pillsContainer.addEventListener('click', removePill); 
 
-    // Ẩn dropdown nếu bấm ra ngoài
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.multi-select-container')) {
             resultsContainer.style.display = 'none';
         }
     });
-
   </script>
+
+  <?php include __DIR__ . '/../Home/aichat.php'; ?>
+  <?php include __DIR__ . '/../Home/Footer.php'; ?>
 
 </body>
 </html>
