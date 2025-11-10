@@ -31,8 +31,24 @@ $conn->close();
   <meta charset="UTF-8">
   <title>Tạo bộ đề</title>
     <link rel="stylesheet" href="../CSS/Tracnghiem/create.css">
+    
     <style>
-        .form-box input[type="number"] {
+        /* Sửa lỗi layout (từ lần trước) */
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column; /* Xếp dọc */
+            min-height: 100vh;
+            margin: 0;
+        }
+        form.container {
+            margin: 20px auto; /* Căn giữa form */
+        }
+    
+        /* [THÊM MỚI] CSS cho input datetime-local */
+        .form-box input[type="number"],
+        .form-box input[type="datetime-local"] {
             background-color: #92b4ec;
             padding: 10px 15px;
             border: none;
@@ -41,11 +57,15 @@ $conn->close();
             color: #333;
             font-family: 'Segoe UI', sans-serif;
             font-size: 15px;
+            box-sizing: border-box; /* Quan trọng */
         }
+        /* HẾT PHẦN THÊM MỚI */
+        
         .form-box input[type="number"]::placeholder {
             color: #555;
             opacity: 0.7;
         }
+        /* (CSS của pill-box giữ nguyên) */
         .multi-select-container {
             position: relative; 
             background-color: #92b4ec;
@@ -138,6 +158,11 @@ $conn->close();
       <label for="thoi_luong">Thời gian (phút):</label>
       <input type="number" name="thoi_luong_phut" id="thoi_luong" min="1" placeholder="Mặc định là 45 phút">
 
+      <label for="thoi_gian_bat_dau">Ngày giờ bắt đầu:</label>
+      <input type="datetime-local" name="thoi_gian_bat_dau" id="thoi_gian_bat_dau">
+
+      <label for="thoi_gian_ket_thuc">Ngày giờ kết thúc:</label>
+      <input type="datetime-local" name="thoi_gian_ket_thuc" id="thoi_gian_ket_thuc">
       <label for="assign_classes_search">Gán cho các lớp:</label>
       <div class="multi-select-container">
           <div class="pills-container" id="pills-container">
@@ -159,12 +184,39 @@ $conn->close();
 
   <script>
     const allClasses = <?php echo json_encode($lop_cua_toi); ?>;
-    
-    console.log("Các lớp đã tải:", allClasses); 
-
     const searchInput = document.getElementById('assign_classes_search');
     const resultsContainer = document.getElementById('search-results');
     const pillsContainer = document.getElementById('pills-container');
+    // 1. Lấy 2 ô nhập ngày giờ
+    const startTimeInput = document.getElementById('thoi_gian_bat_dau');
+    const endTimeInput = document.getElementById('thoi_gian_ket_thuc');
+
+    // 2. Khi thay đổi Ngày Bắt Đầu
+    startTimeInput.addEventListener('change', function() {
+        const startTime = startTimeInput.value;
+
+        if (startTime) {
+            // Đặt 'min' (thời gian tối thiểu) cho ô Ngày Kết Thúc
+            endTimeInput.min = startTime;
+
+            // Nếu Ngày Kết Thúc hiện tại không hợp lệ (sớm hơn), hãy xóa nó
+            if (endTimeInput.value && endTimeInput.value < startTime) {
+                endTimeInput.value = '';
+            }
+        } else {
+            // Nếu xóa Ngày Bắt Đầu, hãy gỡ bỏ ràng buộc 'min'
+            endTimeInput.min = '';
+        }
+    });
+
+    // 3. Khi thay đổi Ngày Kết Thúc (Kiểm tra lại lần nữa)
+    endTimeInput.addEventListener('change', function() {
+        if (startTimeInput.value && endTimeInput.value && endTimeInput.value < startTimeInput.value) {
+            alert('Lỗi: Ngày kết thúc không được sớm hơn ngày bắt đầu.');
+            endTimeInput.value = ''; // Xóa giá trị sai
+        }
+    });
+
 
     function showResults() {
         const searchTerm = searchInput.value.toLowerCase();
@@ -175,12 +227,12 @@ $conn->close();
         );
         const filtered = allClasses.filter(cls => {
             const matchesSearch = cls.ten_lop_hoc.toLowerCase().includes(searchTerm);
-            const notSelected = !selectedIDs.has(String(cls.ID_CLASS)); // Sửa: so sánh string
+            const notSelected = !selectedIDs.has(String(cls.ID_CLASS));
             
             return matchesSearch && notSelected; 
         });
         if (filtered.length === 0) {
-            resultsContainer.innerHTML = '<div class="result-item" style="cursor:default; background:none;">Không tìm thấy (hoặc đã chọn hết).</div>';
+            resultsContainer.innerHTML = '<div class="result-item" style="cursor:default; background:none;">Không tìm thấy.</div>';
         } else {
             filtered.forEach(cls => {
                 const item = document.createElement('div');
@@ -198,20 +250,16 @@ $conn->close();
         if (!e.target.classList.contains('result-item') || !e.target.dataset.id) {
             return;
         }
-
         const id = e.target.dataset.id;
         const name = e.target.dataset.name;
-
         const pill = document.createElement('div');
         pill.className = 'pill';
         pill.dataset.id = id;
-
         pill.innerHTML = `
             <span>${name}</span>
             <span class="pill-close" data-id="${id}">&times;</span>
             <input type="hidden" name="assigned_classes[]" value="${id}">
         `;
-        
         pillsContainer.appendChild(pill);
         searchInput.value = ''; 
         resultsContainer.style.display = 'none'; 
@@ -222,19 +270,16 @@ $conn->close();
         if (!e.target.classList.contains('pill-close')) {
             return;
         }
-        
         const pill = e.target.closest('.pill');
         if (pill) {
             pill.remove();
             showResults(); 
         }
     }
-
     searchInput.addEventListener('input', showResults); 
     searchInput.addEventListener('focus', showResults); 
     resultsContainer.addEventListener('click', addPill); 
     pillsContainer.addEventListener('click', removePill); 
-
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.multi-select-container')) {
             resultsContainer.style.display = 'none';

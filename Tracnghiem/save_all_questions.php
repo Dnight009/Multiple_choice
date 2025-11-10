@@ -24,33 +24,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $lop_hoc = $_POST['lophoc']; 
         $id_giao_vien = $_SESSION['IDACC'];
 
-        // [THÊM MỚI]: Lấy thời gian làm bài (hoặc 45 nếu để trống)
         $thoi_luong = 45; // Mặc định là 45
         if (isset($_POST['thoi_luong_phut']) && !empty($_POST['thoi_luong_phut'])) {
             $thoi_luong = (int)$_POST['thoi_luong_phut'];
         }
 
-        // [SỬA LẠI]: Thêm 'thoi_luong_phut' vào câu lệnh SQL
-        $sql_de = "INSERT INTO TEN_DE (ten_de, trinh_do, lop_hoc, IDACC, thoi_luong_phut) 
-                   VALUES (?, ?, ?, ?, ?)";
+        // [THÊM MỚI] Lấy ngày giờ (NULL nếu rỗng)
+        // Nếu chuỗi rỗng, gán là NULL, nếu không, giữ nguyên giá trị
+        $thoi_gian_bat_dau = !empty($_POST['thoi_gian_bat_dau']) ? $_POST['thoi_gian_bat_dau'] : NULL;
+        $thoi_gian_ket_thuc = !empty($_POST['thoi_gian_ket_thuc']) ? $_POST['thoi_gian_ket_thuc'] : NULL;
+
+        // [SỬA LẠI] Thêm 'thoi_gian_bat_dau', 'thoi_gian_ket_thuc' vào SQL
+        $sql_de = "INSERT INTO TEN_DE (ten_de, trinh_do, lop_hoc, IDACC, thoi_luong_phut, thoi_gian_bat_dau, thoi_gian_ket_thuc) 
+                   VALUES (?, ?, ?, ?, ?, ?, ?)";
         
         $stmt_de = $conn->prepare($sql_de);
-        // [SỬA LẠI]: Thêm "i" (integer) cho $thoi_luong
-        $stmt_de->bind_param("ssiii", $ten_bo_de, $trinh_do, $lop_hoc, $id_giao_vien, $thoi_luong);
+        // [SỬA LẠI] Thêm "ss" (string, string) cho 2 biến ngày giờ
+        $stmt_de->bind_param("ssiiiss", 
+            $ten_bo_de, 
+            $trinh_do, 
+            $lop_hoc, 
+            $id_giao_vien, 
+            $thoi_luong,
+            $thoi_gian_bat_dau, // Biến mới
+            $thoi_gian_ket_thuc // Biến mới
+        );
         $stmt_de->execute();
         
         $id_de_vua_tao = $conn->insert_id;
         $stmt_de->close();
 
-        // [THÊM MỚI]: VIỆC 1.5 - LƯU CÁC LỚP ĐƯỢC GÁN
-        // Kiểm tra xem giáo viên có chọn lớp nào không
+        // (Code gán lớp giữ nguyên)
         if (isset($_POST['assigned_classes']) && is_array($_POST['assigned_classes'])) {
-            
-            // Chuẩn bị câu lệnh chèn vào bảng DE_THI_LOP
             $sql_assign = "INSERT INTO DE_THI_LOP (ID_TD, ID_CLASS) VALUES (?, ?)";
             $stmt_assign = $conn->prepare($sql_assign);
-            
-            // Lặp qua từng ID lớp mà giáo viên đã chọn
             foreach ($_POST['assigned_classes'] as $class_id) {
                 if (!empty($class_id)) {
                     $stmt_assign->bind_param("ii", $id_de_vua_tao, $class_id);
@@ -59,11 +66,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             $stmt_assign->close();
         }
-        // Nếu không có lớp nào được chọn, đề này sẽ là "công khai" (không làm gì cả)
-
-        // --- VIỆC 2: LƯU TẤT CẢ CÂU HỎI (Giữ nguyên) ---
+        
+        // (Code lưu câu hỏi giữ nguyên)
         if (isset($_POST['question']) && is_array($_POST['question'])) {
-            
             $sql_cauhoi = "INSERT INTO CAU_HOI (cau_hoi, dap_an_1, dap_an_2, dap_an_3, dap_an_4, cau_tra_loi_dung, ID_TD) 
                            VALUES (?, ?, ?, ?, ?, ?, ?)";
             $stmt_cauhoi = $conn->prepare($sql_cauhoi);
@@ -76,13 +81,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $da_4 = $q['dap_an_4'];
                 $dap_an_dung_so = (int)$q['dap_an_dung'];
 
-                $stmt_cauhoi->bind_param("sssssii", 
-                    $cau_hoi_text, 
-                    $da_1, $da_2, $da_3, $da_4, 
-                    $dap_an_dung_so, 
-                    $id_de_vua_tao
-                );
-                $stmt_cauhoi->execute();
+                // Sửa lại: Chỉ lưu nếu câu hỏi có nội dung (tránh lỗi)
+                if(!empty(trim($cau_hoi_text))) {
+                    $stmt_cauhoi->bind_param("sssssii", 
+                        $cau_hoi_text, 
+                        $da_1, $da_2, $da_3, $da_4, 
+                        $dap_an_dung_so, 
+                        $id_de_vua_tao
+                    );
+                    $stmt_cauhoi->execute();
+                }
             }
             $stmt_cauhoi->close();
         }
@@ -96,7 +104,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     } catch (Exception $e) {
         $conn->rollback();
-        // [SỬA LẠI]: Hiển thị lỗi SQL cụ thể (giúp gỡ lỗi)
         echo "Có lỗi xảy ra, không thể lưu bộ đề: " . $e->getMessage();
     }
 

@@ -13,8 +13,12 @@ $questions_from_excel = [];
 $ten_bo_de = "";
 $trinh_do = "";
 $lop_hoc = "";
-$thoi_luong = 45; // [SỬA] Đặt giá trị mặc định
-$assigned_classes = []; // [SỬA] Mảng lưu các lớp được gán
+$thoi_luong = 45; 
+$assigned_classes = []; 
+
+// [THÊM MỚI] Biến cho ngày giờ
+$thoi_gian_bat_dau = "";
+$thoi_gian_ket_thuc = "";
 
 // 3. KIỂM TRA NẾU CÓ FILE TỪ TRANG 'Create.php' GỬI QUA
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['tenbode'])) {
@@ -27,17 +31,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['tenbode'])) {
         $lop_hoc = $_POST['lophoc'];
     }
 
-    // [SỬA] Lấy thời lượng (lỗi lần trước)
     if (isset($_POST['thoi_luong_phut']) && !empty($_POST['thoi_luong_phut'])) {
         $thoi_luong = (int)$_POST['thoi_luong_phut'];
     }
     
-    // [SỬA] Lấy mảng các lớp được gán (lỗi lần này)
     if (isset($_POST['assigned_classes']) && is_array($_POST['assigned_classes'])) {
         $assigned_classes = $_POST['assigned_classes'];
     }
 
-    // Xử lý đọc file Excel (chỉ khi file được tải lên)
+    // [THÊM MỚI] Lấy giá trị ngày giờ (nếu có)
+    if (isset($_POST['thoi_gian_bat_dau'])) {
+        $thoi_gian_bat_dau = $_POST['thoi_gian_bat_dau'];
+    }
+    if (isset($_POST['thoi_gian_ket_thuc'])) {
+        $thoi_gian_ket_thuc = $_POST['thoi_gian_ket_thuc'];
+    }
+
+    // Xử lý đọc file Excel (giữ nguyên)
     if (isset($_FILES['file']) && $_FILES['file']['error'] == UPLOAD_ERR_OK) {
         try {
             $excelFilePath = $_FILES['file']['tmp_name'];
@@ -45,7 +55,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['tenbode'])) {
             $worksheet = $spreadsheet->getActiveSheet();
             $highestRow = $worksheet->getHighestDataRow();
 
-            // Lặp từ dòng 2 (bỏ qua tiêu đề)
             for ($row = 2; $row <= $highestRow; $row++) {
                 $cau_hoi  = $worksheet->getCell('A' . $row)->getValue();
                 
@@ -174,12 +183,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['tenbode'])) {
             <input type="hidden" name="lophoc" value="<?php echo htmlspecialchars($lop_hoc); ?>">
             <input type="hidden" name="thoi_luong_phut" value="<?php echo htmlspecialchars($thoi_luong); ?>">
             
+            <input type="hidden" name="thoi_gian_bat_dau" value="<?php echo htmlspecialchars($thoi_gian_bat_dau); ?>">
+            <input type="hidden" name="thoi_gian_ket_thuc" value="<?php echo htmlspecialchars($thoi_gian_ket_thuc); ?>">
+            
             <?php 
-            // Lặp qua mảng ID các lớp đã gán và tạo input ẩn
+            // (Code lặp qua assigned_classes giữ nguyên)
             foreach ($assigned_classes as $class_id): 
             ?>
                 <input type="hidden" name="assigned_classes[]" value="<?php echo htmlspecialchars($class_id); ?>">
             <?php endforeach; ?>
+            
+            
             <div id="question-list-container">
                 
                 <?php

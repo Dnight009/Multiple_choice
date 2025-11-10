@@ -11,16 +11,10 @@ body {
     box-sizing: border-box; /* Thêm dòng này */
 }
 
-/* --- ĐÃ SỬA --- */
 .card-grid {
-    display: grid; /* Đổi sang grid */
+    display: grid;
     gap: 24px;
-    /* - repeat(auto-fit, ...): Tự động điền 
-      - minmax(280px, 1fr): Cột rộng tối thiểu 280px,
-        và tự co dãn (1fr) để lấp đầy hàng.
-      Đây chính là responsive bạn muốn (4-5 cột, 2-3 cột...)
-    */
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 }
 .card {
     background: #fff;

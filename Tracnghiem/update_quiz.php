@@ -27,14 +27,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_de_thi'])) {
     $conn->begin_transaction();
     try {
         
-        // 4. CẬP NHẬT CÁC LỚP ĐƯỢC GÁN
-        // Xóa tất cả các gán ghép cũ
+        // 4. [THÊM MỚI] CẬP NHẬT THÔNG TIN NGÀY GIỜ CỦA ĐỀ
+        // Lấy giá trị (nếu rỗng thì gán là NULL)
+        $thoi_gian_bat_dau = !empty($_POST['thoi_gian_bat_dau']) ? $_POST['thoi_gian_bat_dau'] : NULL;
+        $thoi_gian_ket_thuc = !empty($_POST['thoi_gian_ket_thuc']) ? $_POST['thoi_gian_ket_thuc'] : NULL;
+        
+        $stmt_update_de = $conn->prepare("UPDATE TEN_DE SET 
+                                        thoi_gian_bat_dau = ?, 
+                                        thoi_gian_ket_thuc = ?
+                                        WHERE ID_TD = ? AND IDACC = ?");
+        $stmt_update_de->bind_param("ssii", 
+            $thoi_gian_bat_dau, 
+            $thoi_gian_ket_thuc, 
+            $de_thi_id,
+            $teacher_id // Check lại IDACC lần nữa cho an toàn
+        );
+        $stmt_update_de->execute();
+        $stmt_update_de->close();
+        // --- KẾT THÚC PHẦN THÊM MỚI ---
+
+
+        // 5. CẬP NHẬT CÁC LỚP ĐƯỢC GÁN (Giữ nguyên)
         $stmt_clear_lop = $conn->prepare("DELETE FROM DE_THI_LOP WHERE ID_TD = ?");
         $stmt_clear_lop->bind_param("i", $de_thi_id);
         $stmt_clear_lop->execute();
         $stmt_clear_lop->close();
         
-        // Thêm các gán ghép mới
         if (isset($_POST['assigned_classes']) && is_array($_POST['assigned_classes'])) {
             $sql_assign = "INSERT INTO DE_THI_LOP (ID_TD, ID_CLASS) VALUES (?, ?)";
             $stmt_assign = $conn->prepare($sql_assign);
@@ -47,19 +65,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_de_thi'])) {
             $stmt_assign->close();
         }
 
-        // 5. CẬP NHẬT CÁC CÂU HỎI (Câu đã có)
+        // 6. CẬP NHẬT CÁC CÂU HỎI (Câu đã có) (Giữ nguyên)
         if (isset($_POST['question']) && is_array($_POST['question'])) {
             $stmt_update_q = $conn->prepare("UPDATE CAU_HOI SET 
-                                            cau_hoi = ?, 
-                                            dap_an_1 = ?, 
-                                            dap_an_2 = ?, 
-                                            dap_an_3 = ?, 
-                                            dap_an_4 = ?, 
-                                            cau_tra_loi_dung = ? 
+                                            cau_hoi = ?, dap_an_1 = ?, dap_an_2 = ?, 
+                                            dap_an_3 = ?, dap_an_4 = ?, cau_tra_loi_dung = ? 
                                             WHERE ID_CH = ? AND ID_TD = ?");
                                             
             foreach ($_POST['question'] as $id_ch => $q) {
-                // $id_ch là số (ví dụ '123') -> đây là câu hỏi cũ
                 if (is_numeric($id_ch)) {
                     $stmt_update_q->bind_param("sssssiii", 
                         $q['cau_hoi'], 
@@ -74,13 +87,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_de_thi'])) {
             $stmt_update_q->close();
         }
 
-        // 6. THÊM CÂU HỎI MỚI
+        // 7. THÊM CÂU HỎI MỚI (Giữ nguyên)
         if (isset($_POST['new_question']) && is_array($_POST['new_question'])) {
             $stmt_insert_q = $conn->prepare("INSERT INTO CAU_HOI 
                                             (ID_TD, cau_hoi, dap_an_1, dap_an_2, dap_an_3, dap_an_4, cau_tra_loi_dung) 
                                             VALUES (?, ?, ?, ?, ?, ?, ?)");
             foreach ($_POST['new_question'] as $q) {
-                // Chỉ thêm nếu câu hỏi có nội dung
                 if (!empty(trim($q['cau_hoi']))) {
                     $stmt_insert_q->bind_param("isssssi", 
                         $de_thi_id,
@@ -94,18 +106,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_de_thi'])) {
             $stmt_insert_q->close();
         }
         
-        // 7. XÓA CÁC CÂU HỎI
+        // 8. XÓA CÁC CÂU HỎI (Giữ nguyên)
         if (isset($_POST['delete_question_ids']) && !empty($_POST['delete_question_ids'])) {
-            $ids_to_delete = $_POST['delete_question_ids']; // Đây là chuỗi '12,13,14'
-            // Chạy SQL (Cẩn thận: Chỉ xóa nếu nó thuộc đề thi này)
-            $sql_delete = "DELETE FROM CAU_HOI WHERE ID_TD = ? AND ID_CH IN ($ids_to_delete)";
-            $stmt_delete = $conn->prepare($sql_delete);
-            $stmt_delete->bind_param("i", $de_thi_id);
-            $stmt_delete->execute();
-            $stmt_delete->close();
+            $ids_to_delete = $_POST['delete_question_ids']; 
+            if (preg_match('/^[\d,]+$/', $ids_to_delete)) {
+                $sql_delete = "DELETE FROM CAU_HOI WHERE ID_TD = ? AND ID_CH IN ($ids_to_delete)";
+                $stmt_delete = $conn->prepare($sql_delete);
+                $stmt_delete->bind_param("i", $de_thi_id);
+                $stmt_delete->execute();
+                $stmt_delete->close();
+            }
         }
 
-        // 8. COMMIT VÀ CHUYỂN HƯỚNG
+        // 9. COMMIT VÀ CHUYỂN HƯỚNG
         $conn->commit();
         $_SESSION['flash_message'] = "Cập nhật đề thi thành công!";
         $_SESSION['flash_type'] = "success";
