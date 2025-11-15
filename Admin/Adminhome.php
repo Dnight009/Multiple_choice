@@ -24,16 +24,7 @@ $totalEnquiries = 65;
             </div>
             <ul class="sidebar-menu">
                 <li class="active">Dashboard</li>
-                <li>Settings</li>
-                <li>Page Management</li>
-                <li>Metadata</li>
-                <li>Slider Management</li>
-                <li>Team Management</li>
-                <li>Services Management</li>
-                <li>Portfolio Management</li>
-                <li>User Management</li>
-                <li>Report Management</li>
-                <li>Enquiry Management</li>
+                <li><a href="manage_ideas.php" style="color:white; text-decoration:none;">Duyệt Góp Ý</a></li>
             </ul>
         </aside>
         <main class="dashboard">
