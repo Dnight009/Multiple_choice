@@ -48,10 +48,9 @@ $totalTests = getCount($conn, "SELECT COUNT(ID_TD) FROM ten_de");
             <ul class="sidebar-menu">
                 <li class="active">Dashboard</li>
                 <li><a href="manage_ideas.php" style="color:white; text-decoration:none;">Duyệt Góp Ý</a></li>
-                <li><a href="manage_users.php" style="color:white; text-decoration:none;">Quản lý User</a></li>
-                
+                <li><a href="manage_users.php" style="color:white; text-decoration:none;">Quản lý User</a></li>                
                 <li><a href="manager_de.php" style="color:white; text-decoration:none;">Quản lý Đề thi</a></li>
-                </ul>
+            </ul>
         </aside>
         <main class="dashboard">
             <div class="dashboard-header">

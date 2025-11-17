@@ -2,7 +2,7 @@
 header("Content-Type: application/json");
 
 $api_key = "AIzaSyBUmLMLSBIuTDqdsCMJrAG6RxhBWWiS-8M"; // 🔑 Đổi thành API key bạn lấy ở Google AI Studio
-$url = "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=$api_key";
+$url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=' . $api_key;
 // Nhận dữ liệu từ frontend
 $input = json_decode(file_get_contents("php://input"), true);
 $userText = $input['message'] ?? '';
