@@ -1,12 +1,35 @@
 <?php
-// Example data, replace with database queries
-$totalUsers = 50;
-$totalTeam = 70;
-$totalPortfolio = 30;
-$totalSlider = 15;
-$totalStaticPage = 4;
-$totalServices = 20;
-$totalEnquiries = 65;
+// (MỚI) Bắt đầu session và kết nối CSDL
+session_start(); 
+require_once '../Check/Connect.php';
+
+/**
+ * (MỚI) Hàm trợ giúp để chạy truy vấn COUNT(*) và lấy kết quả
+ * Điều này giúp code gọn gàng hơn
+ */
+function getCount($conn, $sql_query) {
+    $result = $conn->query($sql_query);
+    if ($result && $result->num_rows > 0) {
+        $row = $result->fetch_array();
+        return $row[0]; // Trả về giá trị của cột đầu tiên (kết quả COUNT)
+    }
+    return 0; // Trả về 0 nếu có lỗi hoặc không có kết quả
+}
+
+// --- (MỚI) THỰC HIỆN CÁC TRUY VẤN DATABASE ---
+
+// 1. Tổng số User (Đếm tất cả trong bảng 'account')
+$totalUsers = getCount($conn, "SELECT COUNT(IDACC) FROM account");
+
+// 2. User đăng ký tháng này (So sánh tháng và năm của 'ngay_tao' với ngày hiện tại)
+$usersThisMonth = getCount($conn, "SELECT COUNT(IDACC) FROM account WHERE YEAR(ngay_tao) = YEAR(CURDATE()) AND MONTH(ngay_tao) = MONTH(CURDATE())");
+
+// 3. User đăng ký năm nay (So sánh năm của 'ngay_tao' với ngày hiện tại)
+$usersThisYear = getCount($conn, "SELECT COUNT(IDACC) FROM account WHERE YEAR(ngay_tao) = YEAR(CURDATE())");
+
+// 4. Tổng số đề thi (Đếm tất cả trong bảng 'ten_de')
+$totalTests = getCount($conn, "SELECT COUNT(ID_TD) FROM ten_de");
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,63 +48,50 @@ $totalEnquiries = 65;
             <ul class="sidebar-menu">
                 <li class="active">Dashboard</li>
                 <li><a href="manage_ideas.php" style="color:white; text-decoration:none;">Duyệt Góp Ý</a></li>
-            </ul>
+                <li><a href="manage_users.php" style="color:white; text-decoration:none;">Quản lý User</a></li>
+                
+                <li><a href="manager_de.php" style="color:white; text-decoration:none;">Quản lý Đề thi</a></li>
+                </ul>
         </aside>
         <main class="dashboard">
             <div class="dashboard-header">
                 <h1>Dashboard <span class="subtext">Control panel</span></h1>
                 <div class="profile">Laravel Admin</div>
             </div>
+            
             <div class="card-grid">
-                <div class="card card-blue">
-                    <div class="card-value"><?= $totalStaticPage ?></div>
-                    <div class="card-label">Total Static Page</div>
-                    <a href="#staticpage" class="card-link">More info <span>&#8594;</span></a>
-                </div>
-                <div class="card card-orange">
-                    <div class="card-value"><?= $totalSlider ?></div>
-                    <div class="card-label">Total Slider</div>
-                    <a href="#slider" class="card-link">More info <span>&#8594;</span></a>
-                </div>
-                <div class="card card-red">
-                    <div class="card-value"><?= $totalTeam ?></div>
-                    <div class="card-label">Total Team</div>
-                    <a href="#team" class="card-link">More info <span>&#8594;</span></a>
-                </div>
-                <div class="card card-green">
-                    <div class="card-value"><?= $totalServices ?></div>
-                    <div class="card-label">Total Services</div>
-                    <a href="#services" class="card-link">More info <span>&#8594;</span></a>
-                </div>
-                <div class="card card-blue">
-                    <div class="card-value"><?= $totalPortfolio ?></div>
-                    <div class="card-label">Total Portfolio</div>
-                    <a href="#portfolio" class="card-link">More info <span>&#8594;</span></a>
-                </div>
+                
                 <div class="card card-pink">
                     <div class="card-value"><?= $totalUsers ?></div>
-                    <div class="card-label">Total User</div>
-                    <a href="#users" class="card-link">More info <span>&#8594;</span></a>
+                    <div class="card-label">Tổng số User</div>
+                    <a href="manage_users.php" class="card-link">Quản lý User <span>&#8594;</span></a>
                 </div>
-                <div class="card card-green">
-                    <div class="card-value"><?= $totalEnquiries ?></div>
-                    <div class="card-label">Total Enquiries</div>
-                    <a href="#enquiries" class="card-link">More info <span>&#8594;</span></a>
-                </div>
-            </div>
 
-            <!-- Example sections for user and report management -->
-            <section id="users">
-                <h2>User Management</h2>
-                <!-- User management table/list goes here -->
-                <p>Show, add, edit, or delete users here.</p>
-            </section>
-            <section id="reports">
-                <h2>Report Management</h2>
-                <!-- Report management table/list goes here -->
-                <p>Show, view, or delete reports here.</p>
-            </section>
+                <div class="card card-green">
+                    <div class="card-value"><?= $usersThisMonth ?></div>
+                    <div class="card-label">User đăng ký (Tháng này)</div>
+                    <a href="manage_users.php" class="card-link">Chi tiết <span>&#8594;</span></a>
+                </div>
+
+                <div class="card card-blue">
+                    <div class="card-value"><?= $usersThisYear ?></div>
+                    <div class="card-label">User đăng ký (Năm nay)</div>
+                    <a href="manage_users.php" class="card-link">Chi tiết <span>&#8594;</span></a>
+                </div>
+                
+                <div class="card card-orange">
+                    <div class="card-value"><?= $totalTests ?></div>
+                    <div class="card-label">Tổng số Đề thi</div>
+                    <a href="manager_de.php" class="card-link">Quản lý Đề thi <span>&#8594;</span></a>
+                </div>
+                
+            </div>
+                        
         </main>
     </div>
 </body>
 </html>
+<?php
+// (MỚI) Đóng kết nối CSDL
+$conn->close();
+?>

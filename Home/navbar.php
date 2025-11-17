@@ -59,9 +59,13 @@ if (isset($_SESSION['avatar']) && !empty($_SESSION['avatar'])) {
                 </ul>
         </div>        
         <a href="../Home/gop_y.php">đóng góp ý kiến </a>
-        <a href="../Guest/history.php">Lịch sử làm bài </a>
-        <a href="../Chat/chat.php">Nhắn tin </a>              
         
+        <a href="../Chat/chat.php">Nhắn tin </a>              
+        <?php
+        if (isset($_SESSION['quyen']) && $_SESSION['quyen'] == '1') {   
+            echo '<a href="../Guest/history.php">Lịch sử làm bài </a>';
+            }
+        ?>
         <?php
         if (isset($_SESSION['quyen']) && $_SESSION['quyen'] == '3') {   
             echo '<a href="../Guest/dashboard.php">Quản lý</a>';
