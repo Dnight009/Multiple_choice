@@ -55,7 +55,7 @@ $totalTests = getCount($conn, "SELECT COUNT(ID_TD) FROM ten_de");
         <main class="dashboard">
             <div class="dashboard-header">
                 <h1>Dashboard <span class="subtext">Control panel</span></h1>
-                <div class="profile">Laravel Admin</div>
+                <div class="profile"><a href="../Guest/profile.php">Laravel Admin</a></div>
             </div>
             
             <div class="card-grid">

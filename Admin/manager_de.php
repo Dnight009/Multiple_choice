@@ -113,7 +113,7 @@ $all_tests = $conn->query($sql);
                 <h2>Master Admin</h2>
             </div>
             <ul class="sidebar-menu">
-                <li class="active">Dashboard</li>
+                <li><a href="Adminhome.php" style="color:white; text-decoration:none;">Dashboard</a></li>
                 <li><a href="manage_ideas.php" style="color:white; text-decoration:none;">Duyệt Góp Ý</a></li>
                 <li><a href="manage_users.php" style="color:white; text-decoration:none;">Quản lý User</a></li>                
                 <li><a href="manager_de.php" style="color:white; text-decoration:none;">Quản lý Đề thi</a></li>
@@ -122,7 +122,7 @@ $all_tests = $conn->query($sql);
         <main class="dashboard">
             <div class="dashboard-header">
                 <h1>Quản lý Đề Thi</h1>
-                <div class="profile">Laravel Admin</div>
+                <div class="profile"><a href="../Guest/profile.php">Laravel Admin</a></div>
             </div>
 
             <?php echo $message; // Hiển thị thông báo (nếu có) ?>

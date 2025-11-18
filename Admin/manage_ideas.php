@@ -91,7 +91,7 @@ $conn->close();
                 <h2>Master Admin</h2>
             </div>
             <ul class="sidebar-menu">
-                <li class="active">Dashboard</li>
+                <li><a href="Adminhome.php" style="color:white; text-decoration:none;">Dashboard</a></li>
                 <li><a href="manage_ideas.php" style="color:white; text-decoration:none;">Duyệt Góp Ý</a></li>
                 <li><a href="manage_users.php" style="color:white; text-decoration:none;">Quản lý User</a></li>                
                 <li><a href="manager_de.php" style="color:white; text-decoration:none;">Quản lý Đề thi</a></li>
@@ -100,6 +100,7 @@ $conn->close();
 
         <main class="dashboard">
             <h1>Quản lý Góp Ý / Yêu cầu</h1>
+            
             
             <?php if (!empty($message)): ?>
                 <div class="message <?php echo $message_type; ?>">
