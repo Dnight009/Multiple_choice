@@ -80,13 +80,9 @@ if ($result_suggest->num_rows > 0) {
 
 $conn->close();
 
-// -------------------------------------------------------
-// BƯỚC C: GỌI GEMINI AI VỚI DỮ LIỆU CHI TIẾT
-// -------------------------------------------------------
-$api_key = "AIzaSyBUmLMLSBIuTDqdsCMJrAG6RxhBWWiS-8M"; // 🔑 Đổi thành API key bạn lấy ở Google AI Studio
+$api_key = "AIzaSyBUmLMLSBIuTDqdsCMJrAG6RxhBWWiS-8M"; 
 $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key='.$api_key;
 
-// Tạo Prompt thông minh hơn
 $prompt = "Bạn là một cố vấn học tập AI thân thiện. Dưới đây là dữ liệu học tập của học sinh:\n\n" .
           "1. LỊCH SỬ LÀM BÀI GẦN ĐÂY:\n" . $history_text . "\n" .
           "2. DANH SÁCH CÁC ĐỀ THI CÓ SẴN TRÊN HỆ THỐNG:\n" . $suggestion_list_text . "\n" .
@@ -126,6 +122,5 @@ if (isset($result_ai['error'])) {
 
 $advice = $result_ai['candidates'][0]['content']['parts'][0]['text'] ?? "AI đang suy nghĩ...";
 
-// Trả về kết quả
 echo json_encode(['advice' => $advice]);
 ?>
