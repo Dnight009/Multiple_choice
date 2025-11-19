@@ -177,10 +177,13 @@ $quy_tac_map = [
                 <h2>Bảng điều khiển</h2>
             </div>
             <ul class="sidebar-menu">
-                <li><a href="/Guest/dashboard.php" style="color:white; text-decoration:none;">Dashboard</a></li>
-                <li class="active"><a href="/Guest/manage_grading.php" style="color:white; text-decoration:none;">Quản lý Sổ điểm</a></li>
+                <li class="active"><a href="/TracNghiem/dashboard.php" style="color:white; text-decoration:none;">Dashboard</a></li>
+                
+                <li><a href="/Tracnghiem/create.php" style="color:white; text-decoration:none;">Tạo Bộ Đề</a></li>
                 <li><a href="/Tracnghiem/list_created.php" style="color:white; text-decoration:none;">Quản Lý Đề Thi</a></li>
+                <li><a href="/Guest/class_create.php" style="color:white; text-decoration:none;">Tạo Lớp Học</a></li>
                 <li><a href="/Guest/List_Class.php" style="color:white; text-decoration:none;">Quản Lý Lớp Học</a></li>
+                <li><a href="/Guest/manage_grading.php" style="color:white; text-decoration:none;">Quản lý Sổ điểm</a></li>
                 <hr style="border-color: #1f2a38;">
                 <li><a href="/Home/home.php" style="color:white; text-decoration:none;">Về Trang Chủ</a></li>
             </ul>

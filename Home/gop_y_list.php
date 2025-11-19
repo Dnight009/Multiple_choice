@@ -8,20 +8,30 @@ if (!isset($_SESSION['IDACC'])) {
     header("Location: /TracNghiem/Guest/Login.php");
     exit;
 }
-require_once __DIR__ . '/../Check/Connect.php'; // Sửa đường dẫn nếu cần
+$user_id = $_SESSION['IDACC']; // [MỚI] Lấy ID người dùng
 
-// 2. TRUY VẤN LẤY TẤT CẢ Ý KIẾN
-// [SỬA] Thêm cột C.ghi_chu vào
+require_once __DIR__ . '/../Check/Connect.php'; 
+
+// 2. TRUY VẤN LẤY Ý KIẾN CỦA RIÊNG NGƯỜI NÀY
+// [SỬA LẠI] Thêm điều kiện WHERE C.IDACC = ?
 $sql = "SELECT C.*, A.username 
         FROM CONTRIBUTE_IDEAS AS C
         JOIN ACCOUNT AS A ON C.IDACC = A.IDACC
+        WHERE C.IDACC = ?  
         ORDER BY C.ngay_dang DESC"; 
-        
-$result = $conn->query($sql);
+
+// Dùng Prepared Statement để bảo mật
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
 $ideas = [];
 if ($result->num_rows > 0) {
     $ideas = $result->fetch_all(MYSQLI_ASSOC);
 }
+
+$stmt->close();
 $conn->close();
 ?>
 
@@ -29,7 +39,7 @@ $conn->close();
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Danh sách ý kiến đóng góp</title>
+    <title>Danh sách ý kiến của bạn</title>
     
     <style>
         body { 
@@ -37,7 +47,7 @@ $conn->close();
             display: flex; flex-direction: column; min-height: 100vh;
         }
         .container { 
-            max-width: 900px; /* Mở rộng container */
+            max-width: 900px; 
             margin: 20px auto; background: #fff; padding: 25px; 
             border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
             flex-grow: 1;
@@ -49,16 +59,14 @@ $conn->close();
             border-top: 1px solid #eee; 
         }
         
-        /* Dùng CSS Grid để chia 2 cột */
         .idea-card {
             display: grid;
-            grid-template-columns: 2fr 1fr; /* Cột 1 (Nội dung) 2 phần, Cột 2 (Phản hồi) 1 phần */
+            grid-template-columns: 2fr 1fr; 
             gap: 20px;
             border-bottom: 1px solid #eee;
             padding: 20px 0;
         }
-        .idea-content { } /* Cột 1 */
-        .idea-response { /* Cột 2 */
+        .idea-response { 
             background: #f9f9f9;
             padding: 15px;
             border-radius: 5px;
@@ -70,7 +78,6 @@ $conn->close();
         .idea-date { font-size: 0.9em; color: #777; }
         .idea-body { font-size: 1em; color: #333; line-height: 1.6; white-space: pre-wrap; }
         
-        /* Style cho cột Phản hồi */
         .idea-response-title {
             font-weight: bold;
             margin-bottom: 10px;
@@ -80,12 +87,10 @@ $conn->close();
             font-weight: bold; padding: 5px 10px; border-radius: 5px;
             display: inline-block; font-size: 0.9em; margin-bottom: 10px;
         }
-        /* Style cho 3 trạng thái */
         .status-pending { background: #fff3cd; color: #856404; }
         .status-accepted { background: #e6f7e9; color: #28a745; }
         .status-rejected { background: #f8d7da; color: #721c24; }
         
-        /* Style cho Ghi chú / Lý do */
         .idea-note {
             font-size: 0.95em;
             color: #333;
@@ -94,9 +99,20 @@ $conn->close();
             border-top: 1px dashed #ccc;
             padding-top: 10px;
             margin-top: 10px;
-            white-space: pre-wrap; /* Giữ định dạng xuống dòng của Admin */
+            white-space: pre-wrap;
         }
         .no-ideas { text-align: center; color: #777; padding-top: 30px; font-style: italic; }
+        .btn-back {
+            display: inline-block;
+            margin-bottom: 20px;
+            background: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .btn-back:hover { background: #5a6268; }
     </style>
 </head>
 <body>
@@ -104,7 +120,9 @@ $conn->close();
     <?php include __DIR__ . '/../Home/navbar.php'; ?>
 
     <div class="container">
-        <h1>Danh sách ý kiến đóng góp</h1>
+        <a href="gop_y.php" class="btn-back">« Quay lại trang Góp ý</a>
+
+        <h1>Danh sách ý kiến của bạn</h1>
         
         <div class="idea-list-container">
             
@@ -131,9 +149,9 @@ $conn->close();
                             
                             <?php if ($idea['status'] == 'đã chấp nhận'): ?>
                                 <span class="idea-status status-accepted">Đã chấp nhận</span>
-                            <?php elseif ($idea['status'] == 'không chấp nhận'): // Sửa theo CSDL của bạn ?>
+                            <?php elseif ($idea['status'] == 'không chấp nhận'): ?>
                                 <span class="idea-status status-rejected">Không chấp nhận</span>
-                            <?php else: // 'chờ xử lý' ?>
+                            <?php else: ?>
                                 <span class="idea-status status-pending">Chờ xử lý</span>
                             <?php endif; ?>
                             
@@ -147,7 +165,7 @@ $conn->close();
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
-                <p class="no-ideas">Chưa có ý kiến đóng góp nào.</p>
+                <p class="no-ideas">Bạn chưa gửi ý kiến đóng góp nào.</p>
             <?php endif; ?>
         </div>
     </div>

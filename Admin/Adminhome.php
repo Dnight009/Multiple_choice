@@ -16,19 +16,28 @@ function getCount($conn, $sql_query) {
     return 0; // Trả về 0 nếu có lỗi hoặc không có kết quả
 }
 
-// --- (MỚI) THỰC HIỆN CÁC TRUY VẤN DATABASE ---
+// --- THỰC HIỆN CÁC TRUY VẤN DATABASE ---
 
-// 1. Tổng số User (Đếm tất cả trong bảng 'account')
+// 1. Tổng số User
 $totalUsers = getCount($conn, "SELECT COUNT(IDACC) FROM account");
 
-// 2. User đăng ký tháng này (So sánh tháng và năm của 'ngay_tao' với ngày hiện tại)
+// 2. User đăng ký tháng này
 $usersThisMonth = getCount($conn, "SELECT COUNT(IDACC) FROM account WHERE YEAR(ngay_tao) = YEAR(CURDATE()) AND MONTH(ngay_tao) = MONTH(CURDATE())");
 
-// 3. User đăng ký năm nay (So sánh năm của 'ngay_tao' với ngày hiện tại)
+// 3. User đăng ký năm nay
 $usersThisYear = getCount($conn, "SELECT COUNT(IDACC) FROM account WHERE YEAR(ngay_tao) = YEAR(CURDATE())");
 
-// 4. Tổng số đề thi (Đếm tất cả trong bảng 'ten_de')
+// 4. Tổng số đề thi
 $totalTests = getCount($conn, "SELECT COUNT(ID_TD) FROM ten_de");
+
+// --- [THÊM MỚI] CÁC CHỈ SỐ BẠN YÊU CẦU ---
+
+// 5. Thống kê Lớp học (Hoạt động / Tổng)
+$totalClasses = getCount($conn, "SELECT COUNT(ID_CLASS) FROM class");
+$activeClasses = getCount($conn, "SELECT COUNT(ID_CLASS) FROM class WHERE trang_thai = 'đang hoạt động'");
+
+// 6. Số Góp ý chưa xử lý
+$pendingIdeas = getCount($conn, "SELECT COUNT(ID_IDEAS) FROM contribute_ideas WHERE status = 'chờ xử lý'");
 
 ?>
 <!DOCTYPE html>
@@ -84,6 +93,17 @@ $totalTests = getCount($conn, "SELECT COUNT(ID_TD) FROM ten_de");
                     <a href="manager_de.php" class="card-link">Quản lý Đề thi <span>&#8594;</span></a>
                 </div>
                 
+                <div class="card card-red">
+                    <div class="card-value"><?= $activeClasses ?> / <?= $totalClasses ?></div>
+                    <div class="card-label">Lớp hoạt động / Tổng</div>
+                    <a href="../Admin/manage_classes.php" class="card-link">Quản lý <span>&#8594;</span></a>
+                </div>
+
+                <div class="card card-blue"> <div class="card-value"><?= $pendingIdeas ?></div>
+                    <div class="card-label">Góp ý chờ xử lý</div>
+                    <a href="manage_ideas.php" class="card-link">Xử lý ngay <span>&#8594;</span></a>
+                </div>
+
             </div>
                         
         </main>

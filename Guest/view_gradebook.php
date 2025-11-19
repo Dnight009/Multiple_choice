@@ -4,7 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 if (!isset($_SESSION['IDACC']) || !isset($_SESSION['quyen']) || $_SESSION['quyen'] != '3') {
-    header("Location: /TracNghiem/Home/home.php");
+    header("Location: /Home/home.php");
     exit;
 }
 $teacher_id = $_SESSION['IDACC'];
@@ -165,8 +165,8 @@ $quy_tac_map = [
                 <h2>Bảng điều khiển</h2>
             </div>
             <ul class="sidebar-menu">
-                <li><a href="/TracNghiem/Teacher/dashboard.php" style="color:white; text-decoration:none;">Dashboard</a></li>
-                <li class="active"><a href="/TracNghiem/Teacher/manage_grading.php" style="color:white; text-decoration:none;">Quản lý Sổ điểm</a></li>
+                <li><a href="/Guest/dashboard.php" style="color:white; text-decoration:none;">Dashboard</a></li>
+                <li class="active"><a href="/Guest/manage_grading.php" style="color:white; text-decoration:none;">Quản lý Sổ điểm</a></li>
                 </ul>
         </aside>
         
