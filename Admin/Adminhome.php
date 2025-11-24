@@ -50,6 +50,7 @@ $pendingIdeas = getCount($conn, "SELECT COUNT(ID_IDEAS) FROM contribute_ideas WH
 </head>
 <body>
     <div class="admin-container">
+        
         <aside class="sidebar">
             <div class="sidebar-header">
                 <h2>Master Admin</h2>
