@@ -1,88 +1,62 @@
 <?php
 session_start();
+// Kết nối CSDL (Đường dẫn có thể khác tùy cấu trúc thư mục của bạn)
+require_once '../Check/Connect.php'; 
 
-// đảm bảo chỉ xử lý POST
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: register.php');
-    exit;
-}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // 1. Lấy dữ liệu từ form
+    $username   = trim($_POST['username']);
+    $password   = $_POST['password'];
+    $repassword = $_POST['repassword'];
     
-// include kết nối (đường dẫn tương đối: file connect.php nằm 1 cấp trên)
-require_once __DIR__ . '/../Check/Connect.php';
+    // [MỚI] Lấy thêm dữ liệu cá nhân
+    $ho_ten     = trim($_POST['ho_ten']);
+    $ngay_sinh  = $_POST['ngay_sinh'];
+    $gioi_tinh  = $_POST['gioi_tinh']; // Giá trị sẽ là 'Nam', 'Nữ' hoặc 'Khác'
 
-// Lấy dữ liệu và validate cơ bản
-$username   = trim($_POST['username'] ?? '');
-$password   = $_POST['password'] ?? '';
-$repassword = $_POST['repassword'] ?? '';
-
-if ($username === '' || $password === '' || $repassword === '') {
-    $_SESSION['error'] = "Vui lòng điền đầy đủ thông tin.";
-    header('Location: register.php');
-    exit;
-}
-
-if ($password !== $repassword) {
-    $_SESSION['error'] = "Mật khẩu nhập lại không khớp.";
-    header('Location: register.php');
-    exit;
-}
-
-// kiểm tra username hợp lệ (ví dụ: chỉ cho phép chữ số, chữ cái, gạch dưới, từ 3-50 ký tự)
-if (!preg_match('/^[A-Za-z0-9_]{3,50}$/', $username)) {
-    $_SESSION['error'] = "Tên tài khoản không hợp lệ (3-50 ký tự: chữ, số, gạch dưới).";
-    header('Location: register.php');
-    exit;
-}
-
-// kiểm tra đã tồn tại username chưa
-$checkStmt = $conn->prepare("SELECT IDACC FROM Account WHERE username = ? LIMIT 1");
-if (!$checkStmt) {
-    $_SESSION['error'] = "Lỗi chuẩn bị truy vấn: " . $conn->error;
-    header('Location: register.php');
-    exit;
-}
-$checkStmt->bind_param('s', $username);
-$checkStmt->execute();
-$checkStmt->store_result();
-
-if ($checkStmt->num_rows > 0) {
-    $checkStmt->close();
-    $_SESSION['error'] = "Tên tài khoản đã tồn tại.";
-    header('Location: register.php');
-    exit;
-}
-$checkStmt->close();
-
-// hash mật khẩu
-$hashed = password_hash($password, PASSWORD_DEFAULT);
-
-// quyền mặc định = 2 (giáo viên)
-$quyen = 2;
-
-// chèn vào DB
-$insert = $conn->prepare("INSERT INTO Account (username, password, quyen) VALUES (?, ?, ?)");
-if (!$insert) {
-    $_SESSION['error'] = "Lỗi chuẩn bị chèn: " . $conn->error;
-    header('Location: register.php');
-    exit;
-}
-$insert->bind_param('ssi', $username, $hashed, $quyen);
-
-if ($insert->execute()) {
-    $_SESSION['success'] = "Đăng ký thành công. Bạn có thể đăng nhập ngay bây giờ.";
-    $insert->close();
-    // đóng kết nối an toàn
-    if (isset($conn) && $conn instanceof mysqli) {
-        $conn->close();
+    // 2. Kiểm tra dữ liệu
+    if ($password !== $repassword) {
+        $_SESSION['error'] = "Mật khẩu nhập lại không khớp!";
+        header("Location: Register.php");
+        exit();
     }
-    header('Location: register.php');
-    exit;
-} else {
-    $_SESSION['error'] = "Lỗi khi lưu tài khoản: " . $insert->error;
-    $insert->close();
-    if (isset($conn) && $conn instanceof mysqli) {
-        $conn->close();
+
+    // 3. Kiểm tra Username đã tồn tại chưa
+    $stmt = $conn->prepare("SELECT IDACC FROM account WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $_SESSION['error'] = "Tên đăng nhập đã tồn tại, vui lòng chọn tên khác.";
+        header("Location: Register.php");
+        exit();
     }
-    header('Location: register.php');
-    exit;
+    $stmt->close();
+
+    // 4. Thêm người dùng mới vào CSDL
+    // Mã hóa mật khẩu
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+    
+    // Mặc định quyền = 2 (Học sinh/User), Ngày tạo = NOW()
+    // Câu lệnh INSERT cập nhật thêm cột ho_ten, ngay_sinh, gioi_tinh
+    $sql = "INSERT INTO account (username, password, ho_ten, ngay_sinh, gioi_tinh, quyen, ngay_tao) 
+            VALUES (?, ?, ?, ?, ?, 2, NOW())";
+            
+    $stmt_insert = $conn->prepare($sql);
+    
+    // 'sssss' nghĩa là 5 tham số kiểu string
+    $stmt_insert->bind_param("sssss", $username, $hashed_password, $ho_ten, $ngay_sinh, $gioi_tinh);
+
+    if ($stmt_insert->execute()) {
+        $_SESSION['success'] = "Đăng ký thành công! Bạn có thể đăng nhập ngay.";
+        header("Location: Login.php"); // Chuyển sang trang đăng nhập
+    } else {
+        $_SESSION['error'] = "Lỗi hệ thống: " . $conn->error;
+        header("Location: Register.php");
+    }
+
+    $stmt_insert->close();
+    $conn->close();
 }
+?>
