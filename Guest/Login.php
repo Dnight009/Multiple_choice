@@ -20,13 +20,6 @@
 
       <button type="submit" class="login-btn">LOGIN</button>
 
-      <p class="social-text">Or Sign Up Using</p>
-      <div class="social-icons">
-        <a href="#"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v5/icons/facebook.svg" alt="Facebook"></a>
-        <a href="#"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v5/icons/twitter.svg" alt="Twitter"></a>
-        <a href="#"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v5/icons/google.svg" alt="Google"></a>
-      </div>
-
       <p class="signup-text">Or Sign Up Using <a href="Register.php">SIGN UP</a></p>
     </form>
   </div>

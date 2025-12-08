@@ -1,6 +1,31 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Máy chủ: 127.0.0.1
+-- Thời gian đã tạo: Th12 08, 2025 lúc 02:03 AM
+-- Phiên bản máy phục vụ: 10.4.32-MariaDB
+-- Phiên bản PHP: 8.2.12
+
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Cơ sở dữ liệu: `tracnghiem`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `account`
+--
 
 CREATE TABLE `account` (
   `IDACC` int(11) NOT NULL,
@@ -11,15 +36,27 @@ CREATE TABLE `account` (
   `gioi_tinh` enum('Nam','Nữ','Khác') DEFAULT NULL,
   `password` varchar(255) NOT NULL,
   `quyen` tinyint(4) NOT NULL CHECK (`quyen` in (1,2,3)),
-  `ngay_tao` datetime DEFAULT NULL
+  `ngay_tao` datetime DEFAULT NULL,
+  `avatar` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO `account` (`IDACC`, `username`, `email`, `ho_ten`, `ngay_sinh`, `gioi_tinh`, `password`, `quyen`, `ngay_tao`) VALUES
-(1, 'Admin', NULL, 'Lê Phạm Nhật Hoàng', '2003-07-27', NULL, 'Admin', 1, '2025-10-27 19:52:04'),
-(2, 'Dnight', 'rederword23@gmail.com', 'Từ Minh Gia', '2003-09-09', 'Nam', '$2y$10$.d4TbbmPkXMikgccrNYJFOSeAYk3Z9461Utyn5Tf8W0bbOHxrh.eq', 3, '2025-10-27 19:52:04'),
-(3, 'Pright', NULL, 'Hà Thu Huyền', '2003-09-07', NULL, '$2y$10$M/H/uyfxZLIXMOyRD8wckewnjtbsM5SKTqrFnQ7JGHeGmYvHpPPCi', 2, '2025-10-27 19:52:04'),
-(4, 'Wight', NULL, 'Văn Cao Sâm', '1999-03-03', NULL, '$2y$10$5h3p/z1AJdDGT5UcW8Kgiujjbx2Merew9jlZDt8uyEKETVWQXnUd6', 2, '2025-10-27 19:52:04'),
-(5, 'Ystar003', NULL, NULL, NULL, NULL, '$2y$10$8CZe4J6iR5B1QxfLSSBpEuHDjUeFUIamwYJbGyfQEUmX90OErMUKO', 2, NULL);
+--
+-- Đang đổ dữ liệu cho bảng `account`
+--
+
+INSERT INTO `account` (`IDACC`, `username`, `email`, `ho_ten`, `ngay_sinh`, `gioi_tinh`, `password`, `quyen`, `ngay_tao`, `avatar`) VALUES
+(1, 'Admin', NULL, 'Lê Phạm Nhật Hoàng', '2003-07-27', NULL, 'Admin', 1, '2025-10-27 19:52:04', NULL),
+(2, 'Dnight', 'rederword23@gmail.com', 'Từ Minh Gia', '2003-09-09', 'Nam', '$2y$10$.d4TbbmPkXMikgccrNYJFOSeAYk3Z9461Utyn5Tf8W0bbOHxrh.eq', 3, '2025-10-27 19:52:04', '/uploads/1765155786_logo.png'),
+(3, 'Pright', NULL, 'Hà Thu Huyền', '2003-09-07', NULL, '$2y$10$M/H/uyfxZLIXMOyRD8wckewnjtbsM5SKTqrFnQ7JGHeGmYvHpPPCi', 2, '2025-10-27 19:52:04', NULL),
+(4, 'Wight', NULL, 'Văn Cao Sâm', '1999-03-03', NULL, '$2y$10$5h3p/z1AJdDGT5UcW8Kgiujjbx2Merew9jlZDt8uyEKETVWQXnUd6', 2, '2025-10-27 19:52:04', NULL),
+(5, 'Ystar003', NULL, NULL, NULL, NULL, '$2y$10$8CZe4J6iR5B1QxfLSSBpEuHDjUeFUIamwYJbGyfQEUmX90OErMUKO', 2, NULL, NULL),
+(6, 'Hoang', NULL, NULL, NULL, NULL, '$2y$10$SCcHQYc5/5MRrjQZak5VxOk9SJSumHl8ouPUrFEj9iFnSiAEHKfWe', 2, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `cau_hoi`
+--
 
 CREATE TABLE `cau_hoi` (
   `ID_CH` int(11) NOT NULL,
@@ -31,6 +68,10 @@ CREATE TABLE `cau_hoi` (
   `cau_tra_loi_dung` tinyint(4) DEFAULT NULL,
   `ID_TD` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `cau_hoi`
+--
 
 INSERT INTO `cau_hoi` (`ID_CH`, `cau_hoi`, `dap_an_1`, `dap_an_2`, `dap_an_3`, `dap_an_4`, `cau_tra_loi_dung`, `ID_TD`) VALUES
 (5, '3=1', 'đều đúng', 'sai', 'không có đáp án', 'đúng', 4, 8),
@@ -55,6 +96,12 @@ INSERT INTO `cau_hoi` (`ID_CH`, `cau_hoi`, `dap_an_1`, `dap_an_2`, `dap_an_3`, `
 (25, '3=1', 'đều đúng', 'sai', 'không có đáp án', 'đúng', 4, 18),
 (26, '2+4=', '2', '3', '4', '6', 4, 18);
 
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `class`
+--
+
 CREATE TABLE `class` (
   `ID_CLASS` int(11) NOT NULL,
   `IDACC_teach` int(11) DEFAULT NULL,
@@ -63,10 +110,20 @@ CREATE TABLE `class` (
   `trang_thai` enum('đang hoạt động','đã xóa') NOT NULL DEFAULT 'đang hoạt động'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `class`
+--
+
 INSERT INTO `class` (`ID_CLASS`, `IDACC_teach`, `ten_lop_hoc`, `ngay_tao`, `trang_thai`) VALUES
 (1, 2, '12A VMD', '2025-10-29 19:19:15', 'đang hoạt động'),
 (2, 2, '11A4 võ minh đức', '2025-10-29 19:22:33', 'đang hoạt động'),
 (3, 2, '12A5 Nguyễn Đình Chiểu', '2025-10-29 19:22:57', 'đã xóa');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `class_list`
+--
 
 CREATE TABLE `class_list` (
   `ID_LIST` int(11) NOT NULL,
@@ -74,9 +131,19 @@ CREATE TABLE `class_list` (
   `IDACC_STUDENT` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `class_list`
+--
+
 INSERT INTO `class_list` (`ID_LIST`, `ID_CLASS`, `IDACC_STUDENT`) VALUES
 (3, 2, 3),
 (2, 2, 4);
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `contribute_ideas`
+--
 
 CREATE TABLE `contribute_ideas` (
   `ID_IDEAS` int(11) NOT NULL,
@@ -87,9 +154,19 @@ CREATE TABLE `contribute_ideas` (
   `ghi_chu` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `contribute_ideas`
+--
+
 INSERT INTO `contribute_ideas` (`ID_IDEAS`, `IDACC`, `noi_dung_y_kien`, `ngay_dang`, `status`, `ghi_chu`) VALUES
 (1, 3, 'nội dung test', '2025-10-27 18:54:30', 'đã chấp nhận', 'ok đã xử lý nha bạn'),
 (2, 3, 'sdfghjkllkjhgfdsadfghjk', '2025-11-15 15:29:40', 'không chấp nhận', 'không đồng ý, không có lý do gì cả');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `conversations`
+--
 
 CREATE TABLE `conversations` (
   `ID_CONVERSATION` int(11) NOT NULL,
@@ -98,16 +175,30 @@ CREATE TABLE `conversations` (
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `conversations`
+--
+
 INSERT INTO `conversations` (`ID_CONVERSATION`, `conversation_name`, `is_group`, `created_at`) VALUES
 (1, NULL, 0, '2025-11-15 14:51:32'),
 (2, NULL, 0, '2025-11-15 14:53:40'),
 (3, NULL, 0, '2025-11-15 14:57:53');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `conversation_participants`
+--
 
 CREATE TABLE `conversation_participants` (
   `ID_CP` int(11) NOT NULL,
   `ID_CONVERSATION` int(11) NOT NULL,
   `IDACC` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `conversation_participants`
+--
 
 INSERT INTO `conversation_participants` (`ID_CP`, `ID_CONVERSATION`, `IDACC`) VALUES
 (1, 1, 2),
@@ -117,11 +208,21 @@ INSERT INTO `conversation_participants` (`ID_CP`, `ID_CONVERSATION`, `IDACC`) VA
 (5, 3, 2),
 (6, 3, 4);
 
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `de_thi_lop`
+--
+
 CREATE TABLE `de_thi_lop` (
   `ID_ASSIGN` int(11) NOT NULL,
   `ID_TD` int(11) NOT NULL,
   `ID_CLASS` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `de_thi_lop`
+--
 
 INSERT INTO `de_thi_lop` (`ID_ASSIGN`, `ID_TD`, `ID_CLASS`) VALUES
 (3, 16, 1),
@@ -129,15 +230,31 @@ INSERT INTO `de_thi_lop` (`ID_ASSIGN`, `ID_TD`, `ID_CLASS`) VALUES
 (11, 17, 1),
 (12, 17, 2);
 
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `hang_muc_de_thi`
+--
+
 CREATE TABLE `hang_muc_de_thi` (
   `ID_GAN_DE` int(11) NOT NULL,
   `ID_HANG_MUC` int(11) NOT NULL,
   `ID_TD` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `hang_muc_de_thi`
+--
+
 INSERT INTO `hang_muc_de_thi` (`ID_GAN_DE`, `ID_HANG_MUC`, `ID_TD`) VALUES
 (2, 1, 9),
 (1, 1, 14);
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `hang_muc_diem`
+--
 
 CREATE TABLE `hang_muc_diem` (
   `ID_HANG_MUC` int(11) NOT NULL,
@@ -146,8 +263,18 @@ CREATE TABLE `hang_muc_diem` (
   `quy_tac_tinh` enum('trungbinh','caonhat','duynhat') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `hang_muc_diem`
+--
+
 INSERT INTO `hang_muc_diem` (`ID_HANG_MUC`, `IDACC_teach`, `ten_hang_muc`, `quy_tac_tinh`) VALUES
 (1, 2, 'KT 15 phút', 'caonhat');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `ketqua_lambai`
+--
 
 CREATE TABLE `ketqua_lambai` (
   `ID_DIEM` int(11) NOT NULL,
@@ -158,6 +285,10 @@ CREATE TABLE `ketqua_lambai` (
   `thoi_gian_nop_bai` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `ketqua_lambai`
+--
+
 INSERT INTO `ketqua_lambai` (`ID_DIEM`, `ID_TD`, `IDACC`, `diem`, `tong_thoi_gian_lam_bai`, `thoi_gian_nop_bai`) VALUES
 (3, 17, 3, 0.00, 6, '2025-10-31 13:49:17'),
 (4, 17, 3, 0.00, 284, '2025-10-31 13:53:55'),
@@ -167,6 +298,12 @@ INSERT INTO `ketqua_lambai` (`ID_DIEM`, `ID_TD`, `IDACC`, `diem`, `tong_thoi_gia
 (8, 14, 3, 0.00, 148, '2025-11-06 17:04:53'),
 (9, 14, 3, 0.00, 172, '2025-11-06 17:05:17');
 
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `messages`
+--
+
 CREATE TABLE `messages` (
   `ID_MESSAGE` int(11) NOT NULL,
   `ID_CONVERSATION` int(11) NOT NULL,
@@ -175,12 +312,22 @@ CREATE TABLE `messages` (
   `sent_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `messages`
+--
+
 INSERT INTO `messages` (`ID_MESSAGE`, `ID_CONVERSATION`, `IDACC_sender`, `message_content`, `sent_at`) VALUES
 (1, 1, 2, 'chào em, em chưa làm bài tập. em có việc gì bận à ?', '2025-11-15 14:51:55'),
 (2, 1, 3, 'dạ không ạ. em đang làm đầy đủ ạ', '2025-11-15 14:52:36'),
 (3, 2, 3, 'hello', '2025-11-15 14:53:43'),
 (4, 1, 2, 'vậy tốt', '2025-11-15 14:54:35'),
 (5, 3, 2, 'hé llu làm bài chưa girl?', '2025-11-15 14:58:06');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `ten_de`
+--
 
 CREATE TABLE `ten_de` (
   `ID_TD` int(11) NOT NULL,
@@ -194,6 +341,10 @@ CREATE TABLE `ten_de` (
   `thoi_gian_ket_thuc` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `ten_de`
+--
+
 INSERT INTO `ten_de` (`ID_TD`, `ten_de`, `trinh_do`, `lop_hoc`, `IDACC`, `ngay_tao`, `thoi_luong_phut`, `thoi_gian_bat_dau`, `thoi_gian_ket_thuc`) VALUES
 (8, 'ádfgh', 'de', 1, 2, '2025-10-21 20:52:40', 45, NULL, NULL),
 (9, 'ádfgh', 'de', 1, 2, '2025-10-21 20:57:02', 45, NULL, NULL),
@@ -206,139 +357,266 @@ INSERT INTO `ten_de` (`ID_TD`, `ten_de`, `trinh_do`, `lop_hoc`, `IDACC`, `ngay_t
 (17, 'GÁN TEST 4', 'nangcao', 6, 2, '2025-10-31 19:16:49', 16, '2000-10-10 00:00:00', '2025-10-10 00:00:00'),
 (18, 'GÁN TEST Ngày Giờ', 'de', 1, 2, '2025-11-10 18:49:13', 10, '2000-10-10 00:00:00', '2025-02-12 12:00:00');
 
+--
+-- Chỉ mục cho các bảng đã đổ
+--
+
+--
+-- Chỉ mục cho bảng `account`
+--
 ALTER TABLE `account`
   ADD PRIMARY KEY (`IDACC`),
   ADD UNIQUE KEY `username` (`username`),
   ADD UNIQUE KEY `email` (`email`);
 
+--
+-- Chỉ mục cho bảng `cau_hoi`
+--
 ALTER TABLE `cau_hoi`
   ADD PRIMARY KEY (`ID_CH`),
   ADD KEY `ID_TD` (`ID_TD`);
 
+--
+-- Chỉ mục cho bảng `class`
+--
 ALTER TABLE `class`
   ADD PRIMARY KEY (`ID_CLASS`),
   ADD KEY `IDACC_teach` (`IDACC_teach`);
 
+--
+-- Chỉ mục cho bảng `class_list`
+--
 ALTER TABLE `class_list`
   ADD PRIMARY KEY (`ID_LIST`),
   ADD UNIQUE KEY `uk_student_class` (`ID_CLASS`,`IDACC_STUDENT`),
   ADD KEY `IDACC_STUDENT` (`IDACC_STUDENT`);
 
+--
+-- Chỉ mục cho bảng `contribute_ideas`
+--
 ALTER TABLE `contribute_ideas`
   ADD PRIMARY KEY (`ID_IDEAS`),
   ADD KEY `IDACC` (`IDACC`);
 
+--
+-- Chỉ mục cho bảng `conversations`
+--
 ALTER TABLE `conversations`
   ADD PRIMARY KEY (`ID_CONVERSATION`);
 
+--
+-- Chỉ mục cho bảng `conversation_participants`
+--
 ALTER TABLE `conversation_participants`
   ADD PRIMARY KEY (`ID_CP`),
   ADD UNIQUE KEY `uk_user_conversation` (`ID_CONVERSATION`,`IDACC`),
   ADD KEY `IDACC` (`IDACC`);
 
+--
+-- Chỉ mục cho bảng `de_thi_lop`
+--
 ALTER TABLE `de_thi_lop`
   ADD PRIMARY KEY (`ID_ASSIGN`),
   ADD UNIQUE KEY `uk_de_thi_lop` (`ID_TD`,`ID_CLASS`),
   ADD KEY `ID_CLASS` (`ID_CLASS`);
 
+--
+-- Chỉ mục cho bảng `hang_muc_de_thi`
+--
 ALTER TABLE `hang_muc_de_thi`
   ADD PRIMARY KEY (`ID_GAN_DE`),
   ADD UNIQUE KEY `uk_hangmuc_dethi` (`ID_HANG_MUC`,`ID_TD`),
   ADD KEY `ID_TD` (`ID_TD`);
 
+--
+-- Chỉ mục cho bảng `hang_muc_diem`
+--
 ALTER TABLE `hang_muc_diem`
   ADD PRIMARY KEY (`ID_HANG_MUC`),
   ADD KEY `IDACC_teach` (`IDACC_teach`);
 
+--
+-- Chỉ mục cho bảng `ketqua_lambai`
+--
 ALTER TABLE `ketqua_lambai`
   ADD PRIMARY KEY (`ID_DIEM`),
   ADD KEY `IDACC` (`IDACC`),
   ADD KEY `ID_TD` (`ID_TD`);
 
+--
+-- Chỉ mục cho bảng `messages`
+--
 ALTER TABLE `messages`
   ADD PRIMARY KEY (`ID_MESSAGE`),
   ADD KEY `ID_CONVERSATION` (`ID_CONVERSATION`),
   ADD KEY `IDACC_sender` (`IDACC_sender`);
 
+--
+-- Chỉ mục cho bảng `ten_de`
+--
 ALTER TABLE `ten_de`
   ADD PRIMARY KEY (`ID_TD`),
   ADD KEY `IDACC` (`IDACC`);
 
-ALTER TABLE `account`
-  MODIFY `IDACC` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+--
+-- AUTO_INCREMENT cho các bảng đã đổ
+--
 
+--
+-- AUTO_INCREMENT cho bảng `account`
+--
+ALTER TABLE `account`
+  MODIFY `IDACC` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT cho bảng `cau_hoi`
+--
 ALTER TABLE `cau_hoi`
   MODIFY `ID_CH` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
+--
+-- AUTO_INCREMENT cho bảng `class`
+--
 ALTER TABLE `class`
   MODIFY `ID_CLASS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
+--
+-- AUTO_INCREMENT cho bảng `class_list`
+--
 ALTER TABLE `class_list`
   MODIFY `ID_LIST` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
+--
+-- AUTO_INCREMENT cho bảng `contribute_ideas`
+--
 ALTER TABLE `contribute_ideas`
   MODIFY `ID_IDEAS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
+--
+-- AUTO_INCREMENT cho bảng `conversations`
+--
 ALTER TABLE `conversations`
   MODIFY `ID_CONVERSATION` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
+--
+-- AUTO_INCREMENT cho bảng `conversation_participants`
+--
 ALTER TABLE `conversation_participants`
   MODIFY `ID_CP` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
+--
+-- AUTO_INCREMENT cho bảng `de_thi_lop`
+--
 ALTER TABLE `de_thi_lop`
   MODIFY `ID_ASSIGN` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
+--
+-- AUTO_INCREMENT cho bảng `hang_muc_de_thi`
+--
 ALTER TABLE `hang_muc_de_thi`
   MODIFY `ID_GAN_DE` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
+--
+-- AUTO_INCREMENT cho bảng `hang_muc_diem`
+--
 ALTER TABLE `hang_muc_diem`
   MODIFY `ID_HANG_MUC` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
+--
+-- AUTO_INCREMENT cho bảng `ketqua_lambai`
+--
 ALTER TABLE `ketqua_lambai`
   MODIFY `ID_DIEM` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
+--
+-- AUTO_INCREMENT cho bảng `messages`
+--
 ALTER TABLE `messages`
   MODIFY `ID_MESSAGE` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
+--
+-- AUTO_INCREMENT cho bảng `ten_de`
+--
 ALTER TABLE `ten_de`
   MODIFY `ID_TD` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
+--
+-- Các ràng buộc cho các bảng đã đổ
+--
+
+--
+-- Các ràng buộc cho bảng `cau_hoi`
+--
 ALTER TABLE `cau_hoi`
   ADD CONSTRAINT `cau_hoi_ibfk_1` FOREIGN KEY (`ID_TD`) REFERENCES `ten_de` (`ID_TD`) ON DELETE CASCADE;
 
+--
+-- Các ràng buộc cho bảng `class`
+--
 ALTER TABLE `class`
   ADD CONSTRAINT `class_ibfk_1` FOREIGN KEY (`IDACC_teach`) REFERENCES `account` (`IDACC`) ON DELETE SET NULL;
 
+--
+-- Các ràng buộc cho bảng `class_list`
+--
 ALTER TABLE `class_list`
   ADD CONSTRAINT `class_list_ibfk_1` FOREIGN KEY (`ID_CLASS`) REFERENCES `class` (`ID_CLASS`) ON DELETE CASCADE,
   ADD CONSTRAINT `class_list_ibfk_2` FOREIGN KEY (`IDACC_STUDENT`) REFERENCES `account` (`IDACC`) ON DELETE CASCADE;
 
+--
+-- Các ràng buộc cho bảng `contribute_ideas`
+--
 ALTER TABLE `contribute_ideas`
   ADD CONSTRAINT `contribute_ideas_ibfk_1` FOREIGN KEY (`IDACC`) REFERENCES `account` (`IDACC`) ON DELETE CASCADE;
 
+--
+-- Các ràng buộc cho bảng `conversation_participants`
+--
 ALTER TABLE `conversation_participants`
   ADD CONSTRAINT `conversation_participants_ibfk_1` FOREIGN KEY (`ID_CONVERSATION`) REFERENCES `conversations` (`ID_CONVERSATION`) ON DELETE CASCADE,
   ADD CONSTRAINT `conversation_participants_ibfk_2` FOREIGN KEY (`IDACC`) REFERENCES `account` (`IDACC`) ON DELETE CASCADE;
 
+--
+-- Các ràng buộc cho bảng `de_thi_lop`
+--
 ALTER TABLE `de_thi_lop`
   ADD CONSTRAINT `de_thi_lop_ibfk_1` FOREIGN KEY (`ID_TD`) REFERENCES `ten_de` (`ID_TD`) ON DELETE CASCADE,
   ADD CONSTRAINT `de_thi_lop_ibfk_2` FOREIGN KEY (`ID_CLASS`) REFERENCES `class` (`ID_CLASS`) ON DELETE CASCADE;
 
+--
+-- Các ràng buộc cho bảng `hang_muc_de_thi`
+--
 ALTER TABLE `hang_muc_de_thi`
   ADD CONSTRAINT `hang_muc_de_thi_ibfk_1` FOREIGN KEY (`ID_HANG_MUC`) REFERENCES `hang_muc_diem` (`ID_HANG_MUC`) ON DELETE CASCADE,
   ADD CONSTRAINT `hang_muc_de_thi_ibfk_2` FOREIGN KEY (`ID_TD`) REFERENCES `ten_de` (`ID_TD`) ON DELETE CASCADE;
 
+--
+-- Các ràng buộc cho bảng `hang_muc_diem`
+--
 ALTER TABLE `hang_muc_diem`
   ADD CONSTRAINT `hang_muc_diem_ibfk_1` FOREIGN KEY (`IDACC_teach`) REFERENCES `account` (`IDACC`) ON DELETE CASCADE;
 
+--
+-- Các ràng buộc cho bảng `ketqua_lambai`
+--
 ALTER TABLE `ketqua_lambai`
   ADD CONSTRAINT `ketqua_lambai_ibfk_1` FOREIGN KEY (`IDACC`) REFERENCES `account` (`IDACC`) ON DELETE CASCADE,
   ADD CONSTRAINT `ketqua_lambai_ibfk_2` FOREIGN KEY (`ID_TD`) REFERENCES `ten_de` (`ID_TD`) ON DELETE CASCADE;
 
+--
+-- Các ràng buộc cho bảng `messages`
+--
 ALTER TABLE `messages`
   ADD CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`ID_CONVERSATION`) REFERENCES `conversations` (`ID_CONVERSATION`) ON DELETE CASCADE,
   ADD CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`IDACC_sender`) REFERENCES `account` (`IDACC`) ON DELETE CASCADE;
 
+--
+-- Các ràng buộc cho bảng `ten_de`
+--
 ALTER TABLE `ten_de`
   ADD CONSTRAINT `ten_de_ibfk_1` FOREIGN KEY (`IDACC`) REFERENCES `account` (`IDACC`);
 COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
