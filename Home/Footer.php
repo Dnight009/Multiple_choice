@@ -2,6 +2,20 @@
 ?>
 <header>
     <link rel="stylesheet" href="../CSS/Home/Footer.css">
+    <style>
+        .footer-partner {
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            margin-top: 10px;
+        }
+        .footer-partner img {
+            transition: transform 0.3s;
+        }
+        .footer-partner:hover img {
+            transform: scale(1.1);
+        }
+    </style>
 </header>
 <footer class="footer">
     <div class="footer-container">
@@ -46,11 +60,17 @@
                 <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" height="40">
                 <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="App Store" height="40">
             </div>
-            <div class="footer-title" style="margin-top:18px;">THANH TOÁN</div>
-            <img src="https://sandbox.vnpayment.vn/apis/assets/images/logo_vnpay.png" alt="VNPAY" height="38">
+            
+            <div class="footer-title" style="margin-top:18px;">PHƯƠNG THỨC THANH TOÁN</div>
+            <div style="background: white; display: inline-block; padding: 5px; border-radius: 5px;">
+                <img src="https://cdn-icons-png.flaticon.com/512/10099/10099732.png" alt="Transaction" height="38">
+            </div>
+
             <hr style="margin:18px 0 10px 0;border:1px solid #444;">
-            <div>
-                <img src="https://static.vietjack.com/images/fb-vietjack.png" alt="Học cùng Web" width="260">
+            
+            <div class="footer-partner">
+                <img src="https://cdn-icons-png.flaticon.com/512/2618/2618576.png" alt="Handshake" width="40">
+                <span style="color:#fff; font-weight:bold; font-size: 16px;">Học cùng Web</span>
             </div>
         </div>
     </div>

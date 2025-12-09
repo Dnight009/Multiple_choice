@@ -87,7 +87,7 @@
         
         <div class="spinner"></div>
 
-        <a href="TracNghiem/Home/home.php" class="btn-go">Truy cập ngay</a>
+        <a href="Home/home.php" class="btn-go">Truy cập ngay</a>
     </div>
 
     <script>

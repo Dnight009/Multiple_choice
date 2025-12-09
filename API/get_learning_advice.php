@@ -81,7 +81,8 @@ if ($result_suggest->num_rows > 0) {
 $conn->close();
 
 $api_key = "AIzaSyBUmLMLSBIuTDqdsCMJrAG6RxhBWWiS-8M"; 
-$url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key='.$api_key;
+// Đổi sang gemini-1.5-flash chạy cho ổn định và hạn mức cao hơn
+$url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key='.$api_key;
 
 $prompt = "Bạn là một cố vấn học tập AI thân thiện. Dưới đây là dữ liệu học tập của học sinh:\n\n" .
           "1. LỊCH SỬ LÀM BÀI GẦN ĐÂY:\n" . $history_text . "\n" .

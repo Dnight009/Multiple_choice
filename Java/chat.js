@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function loadConversations() {
         try {
             // [SỬA] Đảm bảo đường dẫn đúng (viết thường)
-            const response = await fetch('../api/get_conversations.php');
+            const response = await fetch('../API/get_conversations.php');
             const conversations = await response.json();
             chatListContainer.innerHTML = '';
             if (conversations.length === 0) {
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 chatItem.dataset.chatId = chat.ID_CONVERSATION; 
                 chatItem.dataset.chatName = chat.display_name;
                 chatItem.innerHTML = `
-                    <img src="../images/default-avatar.png" alt="avt">
+                    <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="avt">
                     <div class="chat-item-info">
                         <strong>${chat.display_name}</strong>
                         <span>...</span>
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (newActive) newActive.classList.add('active');
 
             // [SỬA] Đảm bảo đường dẫn đúng (viết thường)
-            const response = await fetch(`../api/get_messages.php?chat_id=${chatId}`);
+            const response = await fetch(`../API/get_messages.php?chat_id=${chatId}`);
             const messages = await response.json();
 
             messagesContainer.innerHTML = '';
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (chatId !== currentChatId) return; 
         try {
             // [SỬA] Đảm bảo đường dẫn đúng (viết thường)
-            const response = await fetch(`../api/api_check_new_messages.php?chat_id=${chatId}&last_id=${lastMessageId}`);
+            const response = await fetch(`../API/api_check_new_messages.php?chat_id=${chatId}&last_id=${lastMessageId}`);
             const newMessages = await response.json();
             
             if (newMessages.length > 0) {
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         try {
             // [SỬA] Đảm bảo đường dẫn đúng (viết thường)
-            const response = await fetch(`../api/api_search_user.php?q=${query}`);
+            const response = await fetch(`../API/api_search_user.php?q=${query}`);
             const users = await response.json();
             searchResultsBox.innerHTML = '';
             if (users.length === 0) {
@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     userItem.dataset.userId = user.IDACC;
                     userItem.dataset.userName = user.username;
                     userItem.innerHTML = `
-                        <img src="../images/default-avatar.png" alt="avt">
+                        https://cdn-icons-png.flaticon.com/512/149/149071.png
                         <div class="chat-item-info">
                             <strong>${user.ho_ten || user.username}</strong>
                             <span>${user.username}</span>
@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', function() {
         searchInput.value = '';
         try {
             // [SỬA] Đảm bảo đường dẫn đúng (viết thường)
-            const response = await fetch('../api/api_start_chat.php', {
+            const response = await fetch('../API/api_start_chat.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ other_user_id: otherUserId })
@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             // [SỬA] Gửi tin nhắn VÀ CHỜ PHẢN HỒI
-            const response = await fetch('../api/api_send_message.php', {
+            const response = await fetch('../API/api_send_message.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

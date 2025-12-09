@@ -11,15 +11,7 @@ if (!isset($_SESSION['IDACC'])) {
 $my_id = (int)$_SESSION['IDACC'];
 
 // 2. KẾT NỐI CSDL
-require_once __DIR__ . '/../Check/Connect.php'; // Sửa lại đường dẫn
-
-// 3. SQL TÌM CHAT
-// Đây là câu SQL phức tạp nhất:
-// - Lấy tất cả phòng chat (C) mà TÔI (P) tham gia.
-// - Lấy tên hiển thị:
-//   - Nếu là nhóm (is_group = 1), lấy tên nhóm.
-//   - Nếu là 1-với-1 (is_group = 0), tìm tên của NGƯỜI KIA.
-// - Lấy tin nhắn cuối cùng (sẽ làm sau, tạm bỏ qua cho đơn giản)
+require_once __DIR__ . '/../Check/Connect.php'; 
 
 $sql_my_chats = "SELECT 
                     C.ID_CONVERSATION, 
